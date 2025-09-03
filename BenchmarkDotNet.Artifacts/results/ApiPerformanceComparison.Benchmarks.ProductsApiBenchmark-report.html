@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250904-064103</title>
+<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250904-065751</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -16,18 +16,19 @@
 BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.4946/24H2/2024Update/HudsonValley)
 Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
 .NET SDK 9.0.304
-  [Host]     : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX2
-  DefaultJob : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX2
+  [Host]   : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX2
+  .NET 9.0 : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX2
 </code></pre>
-<pre><code></code></pre>
+<pre><code>Job=.NET 9.0  Runtime=.NET 9.0  
+</code></pre>
 
 <table>
-<thead><tr><th>Method      </th><th>Mean</th><th>Error</th>
+<thead><tr><th>Method    </th><th>Mean  </th><th>Error </th><th>StdDev </th><th>Gen0</th><th>Gen1</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>GetSingleProduct</td><td>NA</td><td>NA</td>
-</tr><tr><td>Get50kProducts</td><td>NA</td><td>NA</td>
-</tr><tr><td>Get100000kProducts</td><td>NA</td><td>NA</td>
-</tr><tr><td>Get5kproducts</td><td>NA</td><td>NA</td>
+</thead><tbody><tr><td>GetSingleProduct</td><td>311.7 &mu;s</td><td>6.14 &mu;s</td><td>14.60 &mu;s</td><td>3.4180</td><td>-</td><td>15.08 KB</td>
+</tr><tr><td>Get50kProducts</td><td>267,778.9 &mu;s</td><td>22,002.41 &mu;s</td><td>63,832.99 &mu;s</td><td>2000.0000</td><td>1000.0000</td><td>13601.98 KB</td>
+</tr><tr><td>Get100kProducts</td><td>585,035.1 &mu;s</td><td>44,657.44 &mu;s</td><td>129,559.33 &mu;s</td><td>4000.0000</td><td>2000.0000</td><td>27186.3 KB</td>
+</tr><tr><td>Get5kproducts</td><td>32,405.3 &mu;s</td><td>1,998.72 &mu;s</td><td>5,734.71 &mu;s</td><td>200.0000</td><td>-</td><td>1404.71 KB</td>
 </tr></tbody></table>
 </body>
 </html>

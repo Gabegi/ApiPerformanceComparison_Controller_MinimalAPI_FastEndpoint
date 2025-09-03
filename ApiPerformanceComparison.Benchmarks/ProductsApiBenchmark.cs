@@ -1,25 +1,30 @@
 ﻿using ApiPerformanceComparison.Shared;
 using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
 
 namespace ApiPerformanceComparison.Benchmarks
 {
-
+    
     [MemoryDiagnoser]
+    [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
     public class ProductsApiBenchmark
     {
         private HttpClient _client;
+        private WebApplicationFactory<Controllers.ProductsController> _factory;
 
         [GlobalSetup]
         public void Setup()
         {
-            var appFactory = new WebApplicationFactory<Controllers.ProductsController>()
+            _factory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
-                {
-                    builder.UseSetting("environment", "Testing");
-                });
-            _client = appFactory.CreateClient(new WebApplicationFactoryClientOptions
+
+                builder
+                    .UseEnvironment("Testing")
+                    .UseSetting("environment", "Testing")
+                );
+            _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false
             });
