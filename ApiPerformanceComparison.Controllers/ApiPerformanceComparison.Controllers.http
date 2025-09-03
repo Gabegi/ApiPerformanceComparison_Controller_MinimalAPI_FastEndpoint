@@ -1,0 +1,6 @@
+@ApiPerformanceComparison.Controllers_HostAddress = http://localhost:5161
+
+GET {{ApiPerformanceComparison.Controllers_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

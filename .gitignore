@@ -7,6 +7,20 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
+# Visual Studio user-specific files
+.vs/
+*.user
+*.suo
+
+# Build output
+bin/
+obj/
+
+# Other common
+*.log
+*.vsidx
+
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

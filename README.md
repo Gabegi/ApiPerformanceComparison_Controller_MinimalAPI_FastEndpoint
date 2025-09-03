@@ -40,7 +40,7 @@ Scenarios:
 
 ## Load Testing Scenarios
 
-tool: NBomber
+tool: NBomber, K6, # Bombardier Load Tests
 
 Scenarios:
 
