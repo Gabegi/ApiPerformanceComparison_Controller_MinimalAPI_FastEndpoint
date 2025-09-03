@@ -4,7 +4,7 @@ namespace ApiPerformanceComparison.Shared;
 
 public class Product
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
 
     [Required]
     [MaxLength(200)]

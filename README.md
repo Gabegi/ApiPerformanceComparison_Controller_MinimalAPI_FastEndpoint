@@ -88,7 +88,9 @@ builder.Services.ConfigureHttpJsonOptions(opts =>
 });
 ```
 
-# Why SQLite + EF Core is Perfect for This ProjectAdvantages:
+# Data 
+
+## Why SQLite + EF Core is Perfect for This ProjectAdvantages:
 
 Consistent Database Layer: All three API types use the same data access pattern
 Realistic Performance Testing: Database I/O is often the bottleneck in real applications
@@ -97,8 +99,36 @@ Reproducible: Same database file across all tests
 Isolated: Each test can use fresh data
 Fast: SQLite is very fast for read-heavy workloads typical in benchmarks
 
-# Project Structure
+## Seeder
 
+Instead of a DbContext, we just generate a fixed list of products at startup and inject it everywhere.
+for pure API performance testing, you don’t need Bogus or EF Core’s DbContext at all.
+
+Why?
+Because the actual data values don’t matter for your benchmark. What matters is:
+
+How the framework parses requests
+
+Routing speed
+
+Serialization performance (small vs medium vs large JSON)
+
+Memory allocations per request
+
+
+## Why this beats Bogus + DbContext
+No external dependency → pure .NET only.
+
+Much faster → Bogus generates random text, which is wasted work for API perf tests.
+
+Deterministic & reproducible → Product 000123 is always the same.
+
+Focus on API layer → not EF Core, not database.
+
+Lighter project → no seeding overhead, no DB engine noise.
+
+# Project Structure
+```
 ApiPerformanceComparison/
 ├── src/
 │ ├── ApiPerformanceComparison.Controllers/
@@ -134,3 +164,4 @@ ApiPerformanceComparison/
 ├── benchmarks/
 ├── load-tests/
 └── reports/
+```
