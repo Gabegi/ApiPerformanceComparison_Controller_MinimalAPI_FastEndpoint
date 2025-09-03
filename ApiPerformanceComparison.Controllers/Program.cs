@@ -27,7 +27,7 @@ app.MapControllers();
 
 app.Run();
 
-namespace ApiPerformanceComparison.Controllers
-{
-    public sealed class ControllersEntryPoint { }
-}
+//namespace ApiPerformanceComparison.Controllers
+//{
+//    public sealed class ControllersEntryPoint { }
+//}
