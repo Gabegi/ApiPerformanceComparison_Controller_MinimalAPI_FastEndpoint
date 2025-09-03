@@ -14,7 +14,7 @@ namespace ApiPerformanceComparison.Benchmarks
         [GlobalSetup]
         public void Setup()
         {
-            var appFactory = new WebApplicationFactory<Program>()
+            var appFactory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
                 {
                     builder.UseSetting("environment", "Testing");
@@ -37,7 +37,7 @@ namespace ApiPerformanceComparison.Benchmarks
             var products = await _client.GetFromJsonAsync<List<Product>>("/products/list?count=50000");
         }
         [Benchmark]
-        public async Task Get100000kProducts()
+        public async Task Get100kProducts()
         {
             var products = await _client.GetFromJsonAsync<List<Product>>("/products/list?count=100000");
         }
