@@ -88,6 +88,9 @@ builder.Services.ConfigureHttpJsonOptions(opts =>
 });
 ```
 
+# Try different environments
+Please, don't extrapolate your results. Or do it very carefully. I remind you again: the results in different environments may vary significantly. If a Foo1 method is faster than a Foo2 method for CLR4, .NET Framework 4.5, x64, RyuJIT, Windows, it means that the Foo1 method is faster than the Foo2 method for CLR4, .NET Framework 4.5, x64, RyuJIT, Windows and nothing else. And you can not say anything about methods performance for CLR 2 or .NET Framework 4.6 or LegacyJIT-x64 or x86 or Linux+Mono until you try it.
+
 # Data 
 
 ## Why SQLite + EF Core is Perfect for This ProjectAdvantages:

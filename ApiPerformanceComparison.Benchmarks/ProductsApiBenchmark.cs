@@ -1,5 +1,8 @@
 ﻿using ApiPerformanceComparison.Shared;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Diagnostics.dotTrace;
+using BenchmarkDotNet.Order;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
@@ -9,6 +12,11 @@ namespace ApiPerformanceComparison.Benchmarks
     
     [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
+    [RankColumn]         // adds ranking per method
+    [MinColumn, MaxColumn, MedianColumn]
+    [DotTraceDiagnoser]
+    [ThreadingDiagnoser]
+    [JsonExporter]
     public class ProductsApiBenchmark
     {
         private HttpClient _client;
@@ -29,6 +37,14 @@ namespace ApiPerformanceComparison.Benchmarks
                 AllowAutoRedirect = false
             });
         }
+
+        [GlobalCleanup]
+        public void Cleanup()
+        {
+            _client?.Dispose();
+            _factory?.Dispose();
+        }
+
 
         [Benchmark]
         public async Task GetSingleProduct()
