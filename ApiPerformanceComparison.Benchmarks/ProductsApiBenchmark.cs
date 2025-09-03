@@ -11,11 +11,6 @@ namespace ApiPerformanceComparison.Benchmarks
     {
         private HttpClient _client;
 
-        public ProductsApiBenchmark(HttpClient client)
-        {
-            _client = client;
-        }
-
         [GlobalSetup]
         public void Setup()
         {
