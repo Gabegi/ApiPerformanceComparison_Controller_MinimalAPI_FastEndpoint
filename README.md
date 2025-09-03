@@ -40,4 +40,70 @@ Scenarios:
 
 tool: NBomber
 
+Scenarios:
+
+- Constant Load: Steady RPS over time
+- Spike Load: Sudden traffic increases
+- Ramp-up Load: Gradual increase in traffic
+- Mixed Workload: Combination of different endpoint types
+
+## Reporting and Analysis
+
+Automated Reports:
+
+- BenchmarkDotNet HTML reports
+- NBomber detailed reports
+
 # Project Structure
+
+ApiPerformanceComparison/
+├── src/
+│ ├── ApiPerformanceComparison.Controllers/
+│ │ ├── Controllers/
+│ │ │ ├── ProductsController.cs
+│ │ │ ├── UsersController.cs
+│ │ │ └── OrdersController.cs
+│ │ ├── Models/
+│ │ ├── Services/
+│ │ └── Program.cs
+│ ├── ApiPerformanceComparison.MinimalApi/
+│ │ ├── Endpoints/
+│ │ │ ├── ProductEndpoints.cs
+│ │ │ ├── UserEndpoints.cs
+│ │ │ └── OrderEndpoints.cs
+│ │ ├── Models/
+│ │ ├── Services/
+│ │ └── Program.cs
+│ ├── ApiPerformanceComparison.FastEndpoints/
+│ │ ├── Endpoints/
+│ │ │ ├── Products/
+│ │ │ ├── Users/
+│ │ │ └── Orders/
+│ │ ├── Models/
+│ │ ├── Services/
+│ │ └── Program.cs
+│ └── ApiPerformanceComparison.Shared/
+│ ├── Models/
+│ │ ├── Product.cs
+│ │ ├── User.cs
+│ │ └── Order.cs
+│ ├── Services/
+│ │ ├── IProductService.cs
+│ │ ├── IUserService.cs
+│ │ └── ProductService.cs
+│ └── Data/
+│ └── SampleDataGenerator.cs
+├── tests/
+│ ├── ApiPerformanceComparison.Benchmarks/
+│ │ ├── ControllerBenchmarks.cs
+│ │ ├── MinimalApiBenchmarks.cs
+│ │ ├── FastEndpointsBenchmarks.cs
+│ │ └── Program.cs
+│ └── ApiPerformanceComparison.LoadTests/
+│ ├── Controllers/
+│ ├── MinimalApi/
+│ └── FastEndpoints/
+└── results/
+├── benchmarks/
+├── load-tests/
+└── reports/
