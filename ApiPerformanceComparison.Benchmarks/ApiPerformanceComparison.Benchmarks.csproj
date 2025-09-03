@@ -14,6 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiPerformanceComparison.Shared\ApiPerformanceComparison.Shared.csproj" />
+    <ProjectReference Include="..\ApiPerformanceComparison.Controllers\ApiPerformanceComparison.Controllers.csproj" />
+    <ProjectReference Include="..\ApiPerformanceComparison.MinimalApi\ApiPerformanceComparison.MinimalApi.csproj" />
+    <ProjectReference Include="..\ApiPerformanceComparison.FastEndpoints\ApiPerformanceComparison.FastEndpoints.csproj" />
   </ItemGroup>
 
 </Project>
