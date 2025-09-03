@@ -1,0 +1,2 @@
+# ApiPerformanceComparison_Controller_MinimalAPI_FastEndpoint
+Comparing Controllers vs Minimal APIs vs FastEndpoints
