@@ -1,0 +1,49 @@
+﻿using ApiPerformanceComparison.Shared;
+using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net.Http.Json;
+
+namespace ApiPerformanceComparison.Benchmarks
+{
+
+    [MemoryDiagnoser]
+    public class ProductsApiBenchmark
+    {
+        private HttpClient _client;
+
+        public ProductsApiBenchmark(HttpClient client)
+        {
+            _client = client;
+        }
+
+        [GlobalSetup]
+        public void Setup()
+        {
+            // Starts your API in-memory
+            var appFactory = new WebApplicationFactory<Program>();
+            _client = appFactory.CreateClient();
+        }
+
+        [Benchmark]
+        public async Task GetSingleProduct()
+        {
+            var product = await _client.GetFromJsonAsync<Product>("/api/products/5");
+        }
+
+        [Benchmark]
+        public async Task Get50kProducts()
+        {
+            var products = await _client.GetFromJsonAsync<List<Product>>("/api/products/list?count=50000");
+        }
+        [Benchmark]
+        public async Task Get100000kProducts()
+        {
+            var products = await _client.GetFromJsonAsync<List<Product>>("/api/products/list?count=100000");
+        }
+        [Benchmark]
+        public async Task Get5kproducts()
+        {
+            var products = await _client.GetFromJsonAsync<List<Product>>("/api/products/list?count=5000");
+        }
+    }
+}
