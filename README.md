@@ -88,6 +88,15 @@ builder.Services.ConfigureHttpJsonOptions(opts =>
 });
 ```
 
+# Why SQLite + EF Core is Perfect for This ProjectAdvantages:
+
+Consistent Database Layer: All three API types use the same data access pattern
+Realistic Performance Testing: Database I/O is often the bottleneck in real applications
+Easy Setup: No external database server required
+Reproducible: Same database file across all tests
+Isolated: Each test can use fresh data
+Fast: SQLite is very fast for read-heavy workloads typical in benchmarks
+
 # Project Structure
 
 ApiPerformanceComparison/
