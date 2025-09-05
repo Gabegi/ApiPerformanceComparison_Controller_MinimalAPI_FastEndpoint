@@ -2,7 +2,6 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Diagnostics.dotTrace;
-using BenchmarkDotNet.Toolchains.InProcess.Emit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
@@ -10,12 +9,14 @@ using System.Net.Http.Json;
 namespace ApiPerformanceComparison.Benchmarks
 {
     
-    [MemoryDiagnoser]
+    [MemoryDiagnoser] // memory allocation
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
     [RankColumn]
+    [AllStatisticsColumn]
+    [OperationsPerSecond]
     [MinColumn, MaxColumn, MedianColumn]
-    [DotTraceDiagnoser]
-    [ThreadingDiagnoser]
+    [DotTraceDiagnoser] // CPU Usage
+    [ThreadingDiagnoser] // lock contentions
     [JsonExporter]
     [GroupBenchmarksBy(BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule.ByCategory)]
     [CategoriesColumn]
