@@ -5,7 +5,6 @@ using BenchmarkDotNet.Diagnostics.dotTrace;
 using BenchmarkDotNet.Toolchains.InProcess.Emit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
 namespace ApiPerformanceComparison.Benchmarks
@@ -22,19 +21,20 @@ namespace ApiPerformanceComparison.Benchmarks
     public class ProductsApiBenchmark
     {
         private HttpClient _client;
-        private WebApplicationFactory<Controllers.ProductsController> _factory;
+        private WebApplicationFactory<Controllers.ProductsController> _controllerFactory;
+        private WebApplicationFactory<MinimalApi.MinimalEntryPoint> _minimalFactory;
 
         [GlobalSetup]
         public void Setup()
         {
-            _factory = new WebApplicationFactory<Controllers.ProductsController>()
+            _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
 
                 builder
                     .UseEnvironment("Testing")
                     .UseSetting("environment", "Testing")
                 );
-            _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+            _client = _controllerFactory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false
             });
@@ -44,7 +44,7 @@ namespace ApiPerformanceComparison.Benchmarks
         public void Cleanup()
         {
             _client?.Dispose();
-            _factory?.Dispose();
+            _controllerFactory?.Dispose();
         }
 
 

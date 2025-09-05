@@ -28,7 +28,10 @@ app.MapGet("/products/list", (int? count, List<Product> products) =>
 
 app.Run();
 
-//namespace ApiPerformanceComparison.MinimalApi
-//{
-//    public sealed class MinimalEntryPoint { }
-//}
+//// This class is needed for WebApplicationFactory to work with minimal APIs
+namespace ApiPerformanceComparison.MinimalApi
+{
+    public sealed class MinimalEntryPoint { }
+}
+
+//public partial class Program { }
