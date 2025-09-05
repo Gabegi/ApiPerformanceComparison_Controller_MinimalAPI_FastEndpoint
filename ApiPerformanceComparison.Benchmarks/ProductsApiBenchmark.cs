@@ -2,9 +2,10 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Diagnostics.dotTrace;
-using BenchmarkDotNet.Order;
+using BenchmarkDotNet.Toolchains.InProcess.Emit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
 namespace ApiPerformanceComparison.Benchmarks
@@ -12,11 +13,12 @@ namespace ApiPerformanceComparison.Benchmarks
     
     [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
-    [RankColumn]         // adds ranking per method
+    [RankColumn]
     [MinColumn, MaxColumn, MedianColumn]
     [DotTraceDiagnoser]
     [ThreadingDiagnoser]
     [JsonExporter]
+    [InProcessEmitToolchain] // Add this to avoid antivirus issues
     public class ProductsApiBenchmark
     {
         private HttpClient _client;

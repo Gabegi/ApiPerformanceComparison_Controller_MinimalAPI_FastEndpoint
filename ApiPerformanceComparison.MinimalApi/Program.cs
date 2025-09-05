@@ -28,7 +28,7 @@ app.MapGet("/products/list", (int? count, List<Product> products) =>
 
 app.Run();
 
-namespace ApiPerformanceComparison.MinimalApi
-{
-    public sealed class MinimalEntryPoint { }
-}
+//namespace ApiPerformanceComparison.MinimalApi
+//{
+//    public sealed class MinimalEntryPoint { }
+//}
