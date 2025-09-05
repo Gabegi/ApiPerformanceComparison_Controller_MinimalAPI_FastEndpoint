@@ -17,16 +17,19 @@ namespace ApiPerformanceComparison.Benchmarks
     [DotTraceDiagnoser]
     [ThreadingDiagnoser]
     [JsonExporter]
-    [InProcessEmitToolchain] // Add this to avoid antivirus issues
+    [GroupBenchmarksBy(BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule.ByCategory)]
+    [CategoriesColumn]
     public class ProductsApiBenchmark
     {
-        private HttpClient _client;
-        private WebApplicationFactory<Controllers.ProductsController> _controllerFactory;
-        private WebApplicationFactory<MinimalApi.MinimalEntryPoint> _minimalFactory;
+        private HttpClient? _controllerClient;
+        private HttpClient? _minimalClient;
+        private WebApplicationFactory<Controllers.ProductsController>? _controllerFactory;
+        private WebApplicationFactory<MinimalApi.MinimalEntryPoint>? _minimalFactory;
 
         [GlobalSetup]
         public void Setup()
         {
+            // Controller SetUp
             _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
 
@@ -34,7 +37,24 @@ namespace ApiPerformanceComparison.Benchmarks
                     .UseEnvironment("Testing")
                     .UseSetting("environment", "Testing")
                 );
-            _client = _controllerFactory.CreateClient(new WebApplicationFactoryClientOptions
+            _controllerClient = _controllerFactory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false
+            });
+
+            // Setup Minimal API
+            _minimalFactory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+                .WithWebHostBuilder(builder =>
+                {
+                    builder
+                        .UseEnvironment("Testing")
+                        .ConfigureServices(services =>
+                        {
+                            var testProducts = QuickSeeder.SeedProducts(150_000);
+                        });
+                });
+
+            _minimalClient = _minimalFactory.CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false
             });
@@ -43,31 +63,69 @@ namespace ApiPerformanceComparison.Benchmarks
         [GlobalCleanup]
         public void Cleanup()
         {
-            _client?.Dispose();
+            _controllerClient?.Dispose();
+            _minimalClient?.Dispose();
             _controllerFactory?.Dispose();
+            _minimalFactory?.Dispose();
         }
 
 
-        [Benchmark]
-        public async Task GetSingleProduct()
+        // Controller API Benchmarks
+        [Benchmark(Baseline = true)]
+        public async Task<Product?> Controller_GetSingleProduct()
         {
-            var product = await _client.GetFromJsonAsync<Product>("/products/5");
+            var product = await _controllerClient.GetFromJsonAsync<Product>("/products/5");
+            return product;
         }
 
         [Benchmark]
-        public async Task Get50kProducts()
+        public async Task<List<Product>?> Controller_Get5kProducts()
         {
-            var products = await _client.GetFromJsonAsync<List<Product>>("/products/list?count=50000");
+            var products = await _controllerClient.GetFromJsonAsync<List<Product>>("/products/list?count=5000");
+            return products;
         }
+
         [Benchmark]
-        public async Task Get100kProducts()
+        public async Task<List<Product>?> Controller_Get50kProducts()
         {
-            var products = await _client.GetFromJsonAsync<List<Product>>("/products/list?count=100000");
+            var products = await _controllerClient.GetFromJsonAsync<List<Product>>("/products/list?count=50000");
+            return products;
         }
+
         [Benchmark]
-        public async Task Get5kproducts()
+        public async Task<List<Product>?> Controller_Get100kProducts()
         {
-            var products = await _client.GetFromJsonAsync<List<Product>>("/products/list?count=5000");
+            var products = await _controllerClient.GetFromJsonAsync<List<Product>>("/products/list?count=100000");
+            return products;
+        }
+
+        // Minimal API Benchmarks
+        [Benchmark]
+        public async Task<Product?> MinimalApi_GetSingleProduct()
+        {
+            var product = await _minimalClient.GetFromJsonAsync<Product>("/products/5");
+            return product;
+        }
+
+        [Benchmark]
+        public async Task<List<Product>?> MinimalApi_Get5kProducts()
+        {
+            var products = await _minimalClient.GetFromJsonAsync<List<Product>>("/products/list?count=5000");
+            return products;
+        }
+
+        [Benchmark]
+        public async Task<List<Product>?> MinimalApi_Get50kProducts()
+        {
+            var products = await _minimalClient.GetFromJsonAsync<List<Product>>("/products/list?count=50000");
+            return products;
+        }
+
+        [Benchmark]
+        public async Task<List<Product>?> MinimalApi_Get100kProducts()
+        {
+            var products = await _minimalClient.GetFromJsonAsync<List<Product>>("/products/list?count=100000");
+            return products;
         }
     }
 

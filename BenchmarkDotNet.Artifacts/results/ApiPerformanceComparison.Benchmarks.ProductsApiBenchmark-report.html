@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250904-065751</title>
+<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250905-235352</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -23,12 +23,16 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 </code></pre>
 
 <table>
-<thead><tr><th>Method    </th><th>Mean  </th><th>Error </th><th>StdDev </th><th>Gen0</th><th>Gen1</th><th>Allocated</th>
+<thead><tr><th>Method               </th><th>Mean   </th><th>Error </th><th>StdDev</th><th>Median </th><th>Min    </th><th>Max    </th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Gen0</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Gen1</th><th>Allocated</th><th>Alloc Ratio</th>
 </tr>
-</thead><tbody><tr><td>GetSingleProduct</td><td>311.7 &mu;s</td><td>6.14 &mu;s</td><td>14.60 &mu;s</td><td>3.4180</td><td>-</td><td>15.08 KB</td>
-</tr><tr><td>Get50kProducts</td><td>267,778.9 &mu;s</td><td>22,002.41 &mu;s</td><td>63,832.99 &mu;s</td><td>2000.0000</td><td>1000.0000</td><td>13601.98 KB</td>
-</tr><tr><td>Get100kProducts</td><td>585,035.1 &mu;s</td><td>44,657.44 &mu;s</td><td>129,559.33 &mu;s</td><td>4000.0000</td><td>2000.0000</td><td>27186.3 KB</td>
-</tr><tr><td>Get5kproducts</td><td>32,405.3 &mu;s</td><td>1,998.72 &mu;s</td><td>5,734.71 &mu;s</td><td>200.0000</td><td>-</td><td>1404.71 KB</td>
+</thead><tbody><tr><td>Controller_GetSingleProduct</td><td>89.66 &mu;s</td><td>8.285 &mu;s</td><td>23.369 &mu;s</td><td>83.21 &mu;s</td><td>66.11 &mu;s</td><td>156.87 &mu;s</td><td>1.06</td><td>0.36</td><td>2</td><td>3.4180</td><td>2.0010</td><td>0.0015</td><td>-</td><td>15.08 KB</td><td>1.00</td>
+</tr><tr><td>Controller_Get5kProducts</td><td>8,606.71 &mu;s</td><td>221.200 &mu;s</td><td>638.213 &mu;s</td><td>8,452.29 &mu;s</td><td>7,812.98 &mu;s</td><td>10,382.69 &mu;s</td><td>101.48</td><td>23.04</td><td>4</td><td>250.0000</td><td>14.1094</td><td>0.0156</td><td>171.8750</td><td>1405.02 KB</td><td>93.19</td>
+</tr><tr><td>Controller_Get50kProducts</td><td>92,747.90 &mu;s</td><td>1,837.818 &mu;s</td><td>2,861.262 &mu;s</td><td>92,874.38 &mu;s</td><td>87,737.30 &mu;s</td><td>99,713.27 &mu;s</td><td>1,093.54</td><td>236.64</td><td>5</td><td>2000.0000</td><td>112.6667</td><td>-</td><td>1000.0000</td><td>13601.14 KB</td><td>902.10</td>
+</tr><tr><td>Controller_Get100kProducts</td><td>174,667.87 &mu;s</td><td>3,442.675 &mu;s</td><td>6,029.568 &mu;s</td><td>173,945.60 &mu;s</td><td>162,790.60 &mu;s</td><td>192,053.70 &mu;s</td><td>2,059.41</td><td>446.83</td><td>6</td><td>4000.0000</td><td>220.0000</td><td>-</td><td>2000.0000</td><td>27181.12 KB</td><td>1,802.80</td>
+</tr><tr><td>MinimalApi_GetSingleProduct</td><td>40.44 &mu;s</td><td>3.195 &mu;s</td><td>9.168 &mu;s</td><td>39.79 &mu;s</td><td>23.48 &mu;s</td><td>66.70 &mu;s</td><td>0.48</td><td>0.15</td><td>1</td><td>2.6855</td><td>2.0005</td><td>0.0029</td><td>-</td><td>11.25 KB</td><td>0.75</td>
+</tr><tr><td>MinimalApi_Get5kProducts</td><td>7,780.80 &mu;s</td><td>153.442 &mu;s</td><td>143.530 &mu;s</td><td>7,783.10 &mu;s</td><td>7,562.13 &mu;s</td><td>8,041.79 &mu;s</td><td>91.74</td><td>19.72</td><td>3</td><td>250.0000</td><td>14.9766</td><td>-</td><td>179.6875</td><td>1400.53 KB</td><td>92.89</td>
+</tr><tr><td>MinimalApi_Get50kProducts</td><td>95,422.82 &mu;s</td><td>2,500.818 &mu;s</td><td>7,012.563 &mu;s</td><td>93,619.10 &mu;s</td><td>81,321.60 &mu;s</td><td>114,671.47 &mu;s</td><td>1,125.08</td><td>255.17</td><td>5</td><td>2000.0000</td><td>117.6667</td><td>0.3333</td><td>1000.0000</td><td>13597.82 KB</td><td>901.88</td>
+</tr><tr><td>MinimalApi_Get100kProducts</td><td>172,360.34 &mu;s</td><td>3,399.614 &mu;s</td><td>8,145.258 &mu;s</td><td>171,476.40 &mu;s</td><td>155,624.10 &mu;s</td><td>195,931.50 &mu;s</td><td>2,032.20</td><td>445.96</td><td>6</td><td>4000.0000</td><td>274.0000</td><td>-</td><td>2000.0000</td><td>27198.84 KB</td><td>1,803.98</td>
 </tr></tbody></table>
 </body>
 </html>
