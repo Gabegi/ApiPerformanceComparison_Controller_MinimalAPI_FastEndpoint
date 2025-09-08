@@ -26,3 +26,9 @@ app.UseFastEndpoints();
 app.UseSwaggerGen();
 
 app.Run();
+
+// This class is needed for WebApplicationFactory to work with FastEndpoints app
+namespace ApiPerformanceComparison.FastEndpoints
+{
+    public sealed class FastEndpointsEntryPoint { }
+}

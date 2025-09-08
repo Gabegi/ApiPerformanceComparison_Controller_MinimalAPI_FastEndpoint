@@ -26,6 +26,7 @@ namespace ApiPerformanceComparison.Benchmarks
         private HttpClient? _minimalClient;
         private WebApplicationFactory<Controllers.ProductsController>? _controllerFactory;
         private WebApplicationFactory<MinimalApi.MinimalEntryPoint>? _minimalFactory;
+        private WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>? _fastEndpointsFactory;
 
         [GlobalSetup]
         public void Setup()
@@ -59,6 +60,23 @@ namespace ApiPerformanceComparison.Benchmarks
             {
                 AllowAutoRedirect = false
             });
+
+            // Setup FastEndpoints API
+            _fastEndpointsFactory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
+                .WithWebHostBuilder(builder =>
+                {
+                    builder
+                        .UseEnvironment("Testing")
+                        .ConfigureServices(services =>
+                        {
+                            var testProducts = QuickSeeder.SeedProducts(150_000);
+                        });
+                });
+
+            _fastEndpointsClient = _fastEndpointsFactory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false
+            });
         }
 
         [GlobalCleanup]
@@ -68,6 +86,7 @@ namespace ApiPerformanceComparison.Benchmarks
             _minimalClient?.Dispose();
             _controllerFactory?.Dispose();
             _minimalFactory?.Dispose();
+            _fastEndpointsFactory?.Dispose();
         }
 
 
@@ -126,6 +145,37 @@ namespace ApiPerformanceComparison.Benchmarks
         public async Task<List<Product>?> MinimalApi_Get100kProducts()
         {
             var products = await _minimalClient.GetFromJsonAsync<List<Product>>("/products/list?count=100000");
+            return products;
+        }
+
+        private HttpClient? _fastEndpointsClient;
+
+        // FastEndpoints API Benchmarks
+        [Benchmark]
+        public async Task<Product?> FastEndpoints_GetSingleProduct()
+        {
+            var product = await _fastEndpointsClient.GetFromJsonAsync<Product>("/products/5");
+            return product;
+        }
+
+        [Benchmark]
+        public async Task<List<Product>?> FastEndpoints_Get5kProducts()
+        {
+            var products = await _fastEndpointsClient.GetFromJsonAsync<List<Product>>("/products/list?count=5000");
+            return products;
+        }
+
+        [Benchmark]
+        public async Task<List<Product>?> FastEndpoints_Get50kProducts()
+        {
+            var products = await _fastEndpointsClient.GetFromJsonAsync<List<Product>>("/products/list?count=50000");
+            return products;
+        }
+
+        [Benchmark]
+        public async Task<List<Product>?> FastEndpoints_Get100kProducts()
+        {
+            var products = await _fastEndpointsClient.GetFromJsonAsync<List<Product>>("/products/list?count=100000");
             return products;
         }
     }
