@@ -8,7 +8,7 @@ public sealed class GetProductsListRequest
     public int? Count { get; set; }
 }
 
-public sealed class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumerable<Product>>
+public sealed class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
 {
     private readonly List<Product> _products;
 
@@ -23,11 +23,9 @@ public sealed class GetProductsListEndpoint : Endpoint<GetProductsListRequest, I
         AllowAnonymous();
     }
 
-    public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
-        var take = req.Count.GetValueOrDefault(50);
-        var list = _products.Take(take);
-        return SendOkAsync(list, ct);
+       return await SendAsync(products);
     }
 }
 
