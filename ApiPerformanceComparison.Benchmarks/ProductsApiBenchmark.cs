@@ -24,6 +24,7 @@ namespace ApiPerformanceComparison.Benchmarks
     {
         private HttpClient? _controllerClient;
         private HttpClient? _minimalClient;
+        private HttpClient? _fastEndpointsClient;
         private WebApplicationFactory<Controllers.ProductsController>? _controllerFactory;
         private WebApplicationFactory<MinimalApi.MinimalEntryPoint>? _minimalFactory;
         private WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>? _fastEndpointsFactory;
@@ -148,7 +149,6 @@ namespace ApiPerformanceComparison.Benchmarks
             return products;
         }
 
-        private HttpClient? _fastEndpointsClient;
 
         // FastEndpoints API Benchmarks
         [Benchmark]
