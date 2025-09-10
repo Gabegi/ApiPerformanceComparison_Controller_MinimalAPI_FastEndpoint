@@ -14,7 +14,7 @@ public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
 
     public override void Configure()
     {
-        Get("/products");
+        Get("//products/list");
         AllowAnonymous();
     }
 
