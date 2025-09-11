@@ -3,10 +3,6 @@ using FastEndpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// seed and DI
-var products = QuickSeeder.SeedProducts(100_000);
-builder.Services.AddSingleton(products);
-
 builder.Services.AddFastEndpoints();
 
 var app = builder.Build();

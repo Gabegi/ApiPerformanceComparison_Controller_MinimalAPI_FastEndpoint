@@ -2,11 +2,6 @@ using ApiPerformanceComparison.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Data seeding once at startup
-var products = QuickSeeder.SeedProducts(100_000);
-builder.Services.AddSingleton(products);
-
-
 // API
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
