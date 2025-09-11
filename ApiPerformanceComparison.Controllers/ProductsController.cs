@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiPerformanceComparison.Controllers
 {
-
     [ApiController]
     [Route("products")]
     public class ProductsController : ControllerBase
@@ -28,6 +27,46 @@ namespace ApiPerformanceComparison.Controllers
         public IEnumerable<Product> GetList([FromQuery] int count = 50)
         {
             return _products.Take(count);
+        }
+
+        // POST /products
+        [HttpPost]
+        public ActionResult<Product> Create([FromBody] Product newProduct)
+        {
+            if (newProduct == null)
+                return BadRequest();
+
+            // Generate a new Id if necessary
+            newProduct.Id = _products.Any() ? _products.Max(p => p.Id) + 1 : 1;
+            _products.Add(newProduct);
+
+            return CreatedAtAction(nameof(GetById), new { id = newProduct.Id }, newProduct);
+        }
+
+        // PUT /products/123
+        [HttpPut("{id}")]
+        public ActionResult<Product> Update(int id, [FromBody] Product updatedProduct)
+        {
+            var existingProduct = _products.FirstOrDefault(p => p.Id == id);
+            if (existingProduct is null)
+                return NotFound();
+
+            existingProduct.Name = updatedProduct.Name;
+            existingProduct.Price = updatedProduct.Price;
+
+            return Ok(existingProduct);
+        }
+
+        // DELETE /products/123
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var product = _products.FirstOrDefault(p => p.Id == id);
+            if (product is null)
+                return NotFound();
+
+            _products.Remove(product);
+            return NoContent();
         }
     }
 }
