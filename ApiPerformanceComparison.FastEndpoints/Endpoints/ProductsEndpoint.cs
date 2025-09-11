@@ -3,7 +3,14 @@ using FastEndpoints;
 
 namespace ApiPerformanceComparison.FastEndpoints.Endpoints;
 
+// ====================
 // Request DTOs
+// ====================
+public sealed class GetProductsListRequest
+{
+    public int? Count { get; set; }
+}
+
 public sealed class GetProductRequest
 {
     public int Id { get; set; }
@@ -21,15 +28,16 @@ public sealed class UpdateProductRequest
     public decimal Price { get; set; }
 }
 
+// ====================
+// Endpoints
+// ====================
+
 // GET /products/list
 public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Product>>
 {
     private readonly List<Product> _products;
 
-    public GetProductsListEndpoint(List<Product> products)
-    {
-        _products = products;
-    }
+    public GetProductsListEndpoint(List<Product> products) => _products = products;
 
     public override void Configure()
     {
@@ -40,8 +48,7 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Pro
     public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
     {
         var take = req.Count.GetValueOrDefault(50);
-        var result = _products.Take(take).ToList();
-        return SendOkAsync(result, ct);
+        return SendOkAsync(_products.Take(take).ToList(), ct);
     }
 }
 
@@ -50,10 +57,7 @@ public class GetProductByIdEndpoint : Endpoint<GetProductRequest, Product>
 {
     private readonly List<Product> _products;
 
-    public GetProductByIdEndpoint(List<Product> products)
-    {
-        _products = products;
-    }
+    public GetProductByIdEndpoint(List<Product> products) => _products = products;
 
     public override void Configure()
     {
@@ -64,10 +68,7 @@ public class GetProductByIdEndpoint : Endpoint<GetProductRequest, Product>
     public override Task HandleAsync(GetProductRequest req, CancellationToken ct)
     {
         var product = _products.FirstOrDefault(p => p.Id == req.Id);
-        if (product is null)
-            return SendNotFoundAsync(ct);
-
-        return SendOkAsync(product, ct);
+        return product is null ? SendNotFoundAsync(ct) : SendOkAsync(product, ct);
     }
 }
 
@@ -76,10 +77,7 @@ public class CreateProductEndpoint : Endpoint<CreateProductRequest, Product>
 {
     private readonly List<Product> _products;
 
-    public CreateProductEndpoint(List<Product> products)
-    {
-        _products = products;
-    }
+    public CreateProductEndpoint(List<Product> products) => _products = products;
 
     public override void Configure()
     {
@@ -87,17 +85,19 @@ public class CreateProductEndpoint : Endpoint<CreateProductRequest, Product>
         AllowAnonymous();
     }
 
-    public override Task HandleAsync(CreateProductRequest req, CancellationToken ct)
+    public override Task HandleAsync(CancellationToken ct)
     {
-        var newProduct = new Product
+        if (!Route<int>("id", out var idFromRoute))
         {
-            Id = _products.Any() ? _products.Max(p => p.Id) + 1 : 1,
-            Name = req.Name,
-            Price = req.Price
-        };
+            return SendErrorsAsync("Missing id in route", ct);
+        }
 
-        _products.Add(newProduct);
-        return SendCreatedAtAsync<GetProductByIdEndpoint>(new { Id = newProduct.Id }, newProduct, ct);
+        var product = _products.FirstOrDefault(p => p.Id == idFromRoute);
+        if (product == null)
+            return SendNotFoundAsync(ct);
+
+        _products.Remove(product);
+        return SendNoContentAsync(ct);
     }
 }
 
@@ -106,10 +106,7 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
 {
     private readonly List<Product> _products;
 
-    public UpdateProductEndpoint(List<Product> products)
-    {
-        _products = products;
-    }
+    public UpdateProductEndpoint(List<Product> products) => _products = products;
 
     public override void Configure()
     {
@@ -122,14 +119,14 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
         if (!Route<int>("id", out var id))
             return SendBadRequestAsync(ct);
 
-        var existingProduct = _products.FirstOrDefault(p => p.Id == id);
-        if (existingProduct is null)
+        var product = _products.FirstOrDefault(p => p.Id == id);
+        if (product is null)
             return SendNotFoundAsync(ct);
 
-        existingProduct.Name = req.Name;
-        existingProduct.Price = req.Price;
+        product.Name = req.Name;
+        product.Price = req.Price;
 
-        return SendOkAsync(existingProduct, ct);
+        return SendOkAsync(product, ct);
     }
 }
 
@@ -138,10 +135,7 @@ public class DeleteProductEndpoint : EndpointWithoutRequest
 {
     private readonly List<Product> _products;
 
-    public DeleteProductEndpoint(List<Product> products)
-    {
-        _products = products;
-    }
+    public DeleteProductEndpoint(List<Product> products) => _products = products;
 
     public override void Configure()
     {
