@@ -86,19 +86,20 @@ namespace ApiPerformanceComparison.FastEndpoints.Endpoints
         }
 
         public override Task HandleAsync(CreateProductRequest req, CancellationToken ct)
+    {
+        var nextId = _products.Count == 0 ? 1 : _products.Max(p => p.Id) + 1;
+        var newProduct = new Product
         {
-            var nextId = _products.Count == 0 ? 1 : _products.Max(p => p.Id) + 1;
-            var newProduct = new Product
-            {
-                Id = nextId,
-                Name = req.Name,
-                Price = req.Price
-            };
+            Id = nextId,
+            Name = req.Name,
+            Price = req.Price
+        };
 
-            _products.Add(newProduct);
+        _products.Add(newProduct);
 
-            return SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct, ct);
-        }
+        // Correct usage in v5+: no CancellationToken parameter
+        return SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct);
+    }
     }
 
     // PUT /products/{id}
