@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250909-194750</title>
+<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250910-215416</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -15,28 +15,28 @@
 <pre><code>
 BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.4946/24H2/2024Update/HudsonValley)
 Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
-.NET SDK 9.0.304
-  [Host]   : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX2
-  .NET 9.0 : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX2
+.NET SDK 9.0.305
+  [Host]   : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
+  .NET 9.0 : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
 </code></pre>
 <pre><code>Job=.NET 9.0  Runtime=.NET 9.0  
 </code></pre>
 
 <table>
-<thead><tr><th>Method                  </th><th>Mean   </th><th>Error  </th><th>StdDev </th><th>StdErr</th><th>Median </th><th>Min    </th><th>Q1     </th><th>Q3     </th><th>Max    </th><th>Op/s</th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Gen0</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Gen1</th><th>Allocated</th><th>Alloc Ratio</th>
+<thead><tr><th>Method                  </th><th>Mean</th><th>Error</th><th>StdErr</th><th>StdDev</th><th>Min</th><th>Q1</th><th>Median</th><th>Q3</th><th>Max</th><th>Op/s</th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Alloc Ratio</th>
 </tr>
-</thead><tbody><tr><td>Controller_GetSingleProduct</td><td>68.51 &mu;s</td><td>2.055 &mu;s</td><td>5.694 &mu;s</td><td>0.604 &mu;s</td><td>66.64 &mu;s</td><td>61.48 &mu;s</td><td>64.20 &mu;s</td><td>70.83 &mu;s</td><td>85.00 &mu;s</td><td>14,595.616</td><td>1.01</td><td>0.11</td><td>2</td><td>3.4180</td><td>2.0005</td><td>0.0005</td><td>-</td><td>15.08 KB</td><td>1.00</td>
-</tr><tr><td>Controller_Get5kProducts</td><td>7,297.87 &mu;s</td><td>145.409 &mu;s</td><td>362.120 &mu;s</td><td>42.383 &mu;s</td><td>7,265.45 &mu;s</td><td>6,359.61 &mu;s</td><td>7,068.12 &mu;s</td><td>7,455.38 &mu;s</td><td>8,248.44 &mu;s</td><td>137.026</td><td>107.18</td><td>9.69</td><td>3</td><td>242.1875</td><td>15.7422</td><td>-</td><td>187.5000</td><td>1405.33 KB</td><td>93.20</td>
-</tr><tr><td>Controller_Get50kProducts</td><td>98,775.21 &mu;s</td><td>6,214.302 &mu;s</td><td>17,729.756 &mu;s</td><td>1,828.685 &mu;s</td><td>92,877.47 &mu;s</td><td>76,015.70 &mu;s</td><td>84,567.14 &mu;s</td><td>110,445.47 &mu;s</td><td>148,873.67 &mu;s</td><td>10.124</td><td>1,450.72</td><td>282.03</td><td>6</td><td>2000.0000</td><td>114.6667</td><td>-</td><td>1000.0000</td><td>13602.18 KB</td><td>902.11</td>
-</tr><tr><td>Controller_Get100kProducts</td><td>182,777.54 &mu;s</td><td>11,123.810 &mu;s</td><td>29,498.769 &mu;s</td><td>3,257.594 &mu;s</td><td>173,382.35 &mu;s</td><td>152,233.10 &mu;s</td><td>166,736.83 &mu;s</td><td>185,107.40 &mu;s</td><td>299,758.80 &mu;s</td><td>5.471</td><td>2,684.47</td><td>477.29</td><td>8</td><td>4000.0000</td><td>208.0000</td><td>-</td><td>2000.0000</td><td>27179.52 KB</td><td>1,802.58</td>
-</tr><tr><td>MinimalApi_GetSingleProduct</td><td>48.15 &mu;s</td><td>4.035 &mu;s</td><td>11.447 &mu;s</td><td>1.187 &mu;s</td><td>48.96 &mu;s</td><td>23.96 &mu;s</td><td>41.23 &mu;s</td><td>54.83 &mu;s</td><td>74.83 &mu;s</td><td>20,770.382</td><td>0.71</td><td>0.18</td><td>1</td><td>2.6855</td><td>2.0012</td><td>0.0027</td><td>-</td><td>11.25 KB</td><td>0.75</td>
-</tr><tr><td>MinimalApi_Get5kProducts</td><td>7,825.01 &mu;s</td><td>133.547 &mu;s</td><td>124.920 &mu;s</td><td>32.254 &mu;s</td><td>7,786.30 &mu;s</td><td>7,649.51 &mu;s</td><td>7,725.46 &mu;s</td><td>7,906.33 &mu;s</td><td>8,077.08 &mu;s</td><td>127.795</td><td>114.93</td><td>8.88</td><td>4</td><td>234.3750</td><td>15.3125</td><td>-</td><td>171.8750</td><td>1400.39 KB</td><td>92.88</td>
-</tr><tr><td>MinimalApi_Get50kProducts</td><td>75,270.92 &mu;s</td><td>1,085.996 &mu;s</td><td>1,115.238 &mu;s</td><td>270.485 &mu;s</td><td>74,894.13 &mu;s</td><td>74,185.67 &mu;s</td><td>74,559.20 &mu;s</td><td>75,642.83 &mu;s</td><td>78,640.30 &mu;s</td><td>13.285</td><td>1,105.51</td><td>85.22</td><td>5</td><td>2000.0000</td><td>108.6667</td><td>-</td><td>1000.0000</td><td>13596.62 KB</td><td>901.74</td>
-</tr><tr><td>MinimalApi_Get100kProducts</td><td>149,225.53 &mu;s</td><td>2,659.050 &mu;s</td><td>2,076.011 &mu;s</td><td>599.293 &mu;s</td><td>149,509.40 &mu;s</td><td>144,904.30 &mu;s</td><td>148,649.09 &mu;s</td><td>150,242.06 &mu;s</td><td>152,101.25 &mu;s</td><td>6.701</td><td>2,191.69</td><td>168.54</td><td>7</td><td>4000.0000</td><td>242.5000</td><td>-</td><td>2000.0000</td><td>27179.65 KB</td><td>1,802.59</td>
-</tr><tr><td>FastEndpoints_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
-</tr><tr><td>FastEndpoints_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
-</tr><tr><td>FastEndpoints_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
-</tr><tr><td>FastEndpoints_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
+</thead><tbody><tr><td>Controller_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
 </tr></tbody></table>
 </body>
 </html>

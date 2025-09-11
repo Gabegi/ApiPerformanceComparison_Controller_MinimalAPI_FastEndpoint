@@ -131,6 +131,29 @@ Focus on API layer → not EF Core, not database.
 
 Lighter project → no seeding overhead, no DB engine noise.
 
+## Data size
+Data Set Recommendations
+Optimal Dataset Sizes
+1. Small Dataset (1,000 products):
+
+Purpose: Simulates typical paginated API responses
+Use case: Standard web/mobile app pagination (50-100 items per page)
+Memory impact: ~100KB-500KB JSON payload
+Focus: Tests routing and serialization overhead
+
+2. Medium Dataset (10,000 products):
+
+Purpose: Tests serialization performance and memory pressure
+Use case: Data export, reporting, or bulk operations
+Memory impact: ~1-5MB JSON payload
+Focus: Reveals performance differences under moderate load
+
+3. Avoid Large Datasets (50k+ products):
+
+Why: Tests JSON serialization more than framework performance
+Problem: Can cause memory pressure that skews results
+Alternative: Use concurrent smaller requests instead
+
 # Project Structure
 
 ```
