@@ -1,7 +1,10 @@
-using ApiPerformanceComparison.Shared;
+using ApiPerformanceComparison.Shared; // for Product, CreateProductRequest, UpdateProductRequest
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection; // for AddSingleton
 using System.Net.Http.Json;
+
+
 
 namespace ApiPerformanceComparison.Benchmarks
 {
