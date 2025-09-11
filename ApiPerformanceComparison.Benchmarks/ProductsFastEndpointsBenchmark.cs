@@ -2,6 +2,8 @@ using ApiPerformanceComparison.Shared;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http.Json;
+using Microsoft.Extensions.DependencyInjection; // for AddSingleton
+
 
 namespace ApiPerformanceComparison.Benchmarks
 {
