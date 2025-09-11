@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250910-215416</title>
+<title>ApiPerformanceComparison.Benchmarks.ProductsApiBenchmark-20250911-145917</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -13,7 +13,7 @@
 </head>
 <body>
 <pre><code>
-BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.4946/24H2/2024Update/HudsonValley)
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.6584/24H2/2024Update/HudsonValley)
 Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
 .NET SDK 9.0.305
   [Host]   : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
@@ -23,20 +23,26 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 </code></pre>
 
 <table>
-<thead><tr><th>Method                  </th><th>Mean</th><th>Error</th><th>StdErr</th><th>StdDev</th><th>Min</th><th>Q1</th><th>Median</th><th>Q3</th><th>Max</th><th>Op/s</th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Alloc Ratio</th>
+<thead><tr><th>Method                          </th><th>InvocationCount</th><th>UnrollFactor</th><th>Categories</th><th>Mean</th><th>Error</th><th>StdErr</th><th>StdDev</th><th>Min</th><th>Q1</th><th>Median</th><th>Q3</th><th>Max</th><th>Op/s</th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Alloc Ratio</th>
 </tr>
-</thead><tbody><tr><td>Controller_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>Controller_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>Controller_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>Controller_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>MinimalApi_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>MinimalApi_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>MinimalApi_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>MinimalApi_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>FastEndpoints_GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>FastEndpoints_Get5kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>FastEndpoints_Get50kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>FastEndpoints_Get100kProducts</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</thead><tbody><tr><td>Controller_ColdStart</td><td>1</td><td>1</td><td>ColdStart</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_ColdStart</td><td>1</td><td>1</td><td>ColdStart</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_ColdStart</td><td>1</td><td>1</td><td>ColdStart</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_GetMediumDataset</td><td>Default</td><td>16</td><td>MediumDataset</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_GetMediumDataset</td><td>Default</td><td>16</td><td>MediumDataset</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_GetMediumDataset</td><td>Default</td><td>16</td><td>MediumDataset</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_GetSingleProduct</td><td>Default</td><td>16</td><td>SingleRequest</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_GetSingleProduct</td><td>Default</td><td>16</td><td>SingleRequest</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_GetSingleProduct</td><td>Default</td><td>16</td><td>SingleRequest</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_GetSmallDataset</td><td>Default</td><td>16</td><td>SmallDataset</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_GetSmallDataset</td><td>Default</td><td>16</td><td>SmallDataset</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_GetSmallDataset</td><td>Default</td><td>16</td><td>SmallDataset</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_ConcurrentSingleRequests</td><td>Default</td><td>16</td><td>Throughput</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_ConcurrentSingleRequests</td><td>Default</td><td>16</td><td>Throughput</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_ConcurrentSingleRequests</td><td>Default</td><td>16</td><td>Throughput</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>Controller_ConcurrentSmallDatasets</td><td>Default</td><td>16</td><td>Throughput</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>MinimalApi_ConcurrentSmallDatasets</td><td>Default</td><td>16</td><td>Throughput</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
+</tr><tr><td>FastEndpoints_ConcurrentSmallDatasets</td><td>Default</td><td>16</td><td>Throughput</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td><td>?</td>
 </tr></tbody></table>
 </body>
 </html>
