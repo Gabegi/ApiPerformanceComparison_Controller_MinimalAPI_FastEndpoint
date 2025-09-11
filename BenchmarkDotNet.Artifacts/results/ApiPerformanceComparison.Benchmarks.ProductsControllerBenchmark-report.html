@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ApiPerformanceComparison.Benchmarks.ProductsControllerBenchmark-20250911-181341</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.6584/24H2/2024Update/HudsonValley)
+Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 9.0.305
+  [Host]     : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
+  DefaultJob : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method    </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>GetSingleProduct</td><td>61.00 &mu;s</td><td>0.851 &mu;s</td><td>1.220 &mu;s</td><td>61.07 &mu;s</td><td>3.6621</td><td>-</td><td>-</td><td>15.14 KB</td>
+</tr><tr><td>GetSmallDataset</td><td>2,194.31 &mu;s</td><td>31.207 &mu;s</td><td>48.586 &mu;s</td><td>2,190.51 &mu;s</td><td>109.3750</td><td>109.3750</td><td>109.3750</td><td>720.38 KB</td>
+</tr><tr><td>GetMediumDataset</td><td>18,982.05 &mu;s</td><td>185.216 &mu;s</td><td>154.664 &mu;s</td><td>18,960.92 &mu;s</td><td>1500.0000</td><td>1406.2500</td><td>1031.2500</td><td>10186.43 KB</td>
+</tr><tr><td>CreateProduct</td><td>1,304.31 &mu;s</td><td>220.249 &mu;s</td><td>649.409 &mu;s</td><td>1,264.36 &mu;s</td><td>5.3711</td><td>0.9766</td><td>-</td><td>21.82 KB</td>
+</tr><tr><td>UpdateProduct</td><td>87.54 &mu;s</td><td>2.846 &mu;s</td><td>7.742 &mu;s</td><td>84.58 &mu;s</td><td>4.8828</td><td>-</td><td>-</td><td>21.2 KB</td>
+</tr><tr><td>DeleteProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr></tbody></table>
+</body>
+</html>
