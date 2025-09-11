@@ -3,7 +3,12 @@ using FastEndpoints;
 
 namespace ApiPerformanceComparison.FastEndpoints.Endpoints;
 
-public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
+public sealed class GetProductsListRequest
+{
+    public int? Count { get; set; }
+}
+
+public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Product>>
 {
     private readonly List<Product> _products;
 
@@ -18,8 +23,10 @@ public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
     {
-        await SendAsync(_products);
+        var take = req.Count.GetValueOrDefault(50);
+        var result = _products.Take(take).ToList();
+        return SendOkAsync(result, ct);
     }
 }
