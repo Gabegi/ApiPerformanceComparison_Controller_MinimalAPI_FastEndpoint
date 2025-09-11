@@ -4,6 +4,7 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Diagnostics.dotTrace;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
 namespace ApiPerformanceComparison.Benchmarks
@@ -47,6 +48,7 @@ namespace ApiPerformanceComparison.Benchmarks
                         {
                             // Seed with sufficient data for all tests
                             var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
+                            services.AddSingleton(testProducts);
                         })
                 );
             _controllerClient = _controllerFactory.CreateClient(new WebApplicationFactoryClientOptions
@@ -62,6 +64,7 @@ namespace ApiPerformanceComparison.Benchmarks
                         .ConfigureServices(services =>
                         {
                             var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
+                            services.AddSingleton(testProducts);
                         })
                 );
             _minimalClient = _minimalFactory.CreateClient(new WebApplicationFactoryClientOptions
@@ -77,6 +80,7 @@ namespace ApiPerformanceComparison.Benchmarks
                         .ConfigureServices(services =>
                         {
                             var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
+                            services.AddSingleton(testProducts);
                         })
                 );
             _fastEndpointsClient = _fastEndpointsFactory.CreateClient(new WebApplicationFactoryClientOptions
