@@ -269,3 +269,21 @@
 
     For larger payloads (100k products), both allocate ~27 MB/request.
     → Allocation scales linearly with payload size, minimal differences between API styles.
+
+# Why having all tests in one class?
+
+Moving from "3 separate test classes" to "1 unified comparison class" is the biggest improvement. This ensures all frameworks are tested:
+
+At the same time
+With identical data
+Under identical conditions
+With direct performance ratios (1.5x slower, 2x faster, etc.)
+
+## What 3 classes might have missed
+
+Your FastEndpoints being 10x slower might actually be due to:
+
+Different test execution timing
+Different JIT compilation states
+Different memory pressure during testing
+The DI container issues we found in your code

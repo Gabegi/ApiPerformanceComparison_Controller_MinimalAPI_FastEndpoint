@@ -40,7 +40,7 @@ namespace ApiPerformanceComparison.Benchmarks;
             _controllerClient = _controllerFactory.CreateClient();
 
             // Setup Minimal API
-            _minimalApiFactory = new WebApplicationFactory<MinimalApis.Program>()
+            _minimalApiFactory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
@@ -105,7 +105,7 @@ namespace ApiPerformanceComparison.Benchmarks;
         [BenchmarkCategory("ColdStart")]
         public async Task<Product?> MinimalApi_ColdStart()
         {
-            using var factory = new WebApplicationFactory<MinimalApis.Program>()
+            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
