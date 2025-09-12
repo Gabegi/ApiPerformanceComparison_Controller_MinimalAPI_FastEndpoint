@@ -8,14 +8,14 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 
 
 ```
-| Method           | Mean         | Error      | StdDev     | Median       | Gen0      | Gen1      | Gen2      | Allocated   |
-|----------------- |-------------:|-----------:|-----------:|-------------:|----------:|----------:|----------:|------------:|
-| GetSingleProduct |     61.00 μs |   0.851 μs |   1.220 μs |     61.07 μs |    3.6621 |         - |         - |    15.14 KB |
-| GetSmallDataset  |  2,194.31 μs |  31.207 μs |  48.586 μs |  2,190.51 μs |  109.3750 |  109.3750 |  109.3750 |   720.38 KB |
-| GetMediumDataset | 18,982.05 μs | 185.216 μs | 154.664 μs | 18,960.92 μs | 1500.0000 | 1406.2500 | 1031.2500 | 10186.43 KB |
-| CreateProduct    |  1,304.31 μs | 220.249 μs | 649.409 μs |  1,264.36 μs |    5.3711 |    0.9766 |         - |    21.82 KB |
-| UpdateProduct    |     87.54 μs |   2.846 μs |   7.742 μs |     84.58 μs |    4.8828 |         - |         - |     21.2 KB |
-| DeleteProduct    |           NA |         NA |         NA |           NA |        NA |        NA |        NA |          NA |
+| Method           | Mean         | Error        | StdDev        | Median       | Gen0      | Gen1      | Gen2      | Allocated |
+|----------------- |-------------:|-------------:|--------------:|-------------:|----------:|----------:|----------:|----------:|
+| GetSingleProduct |     314.8 μs |    100.92 μs |     295.98 μs |     105.0 μs |    3.4180 |         - |         - |  15.14 KB |
+| GetSmallDataset  |   6,778.8 μs |  2,309.97 μs |   6,627.73 μs |   2,755.3 μs |  109.3750 |  109.3750 |  109.3750 | 736.45 KB |
+| GetMediumDataset | 180,739.9 μs | 44,085.98 μs | 125,779.78 μs | 137,376.2 μs | 2000.0000 | 2000.0000 | 2000.0000 |  10177 KB |
+| CreateProduct    |   1,244.5 μs |    247.77 μs |     661.34 μs |   1,368.8 μs |    4.8828 |         - |         - |  21.82 KB |
+| UpdateProduct    |     159.0 μs |     20.80 μs |      56.94 μs |     141.2 μs |    4.8828 |         - |         - |   21.2 KB |
+| DeleteProduct    |           NA |           NA |            NA |           NA |        NA |        NA |        NA |        NA |
 
 Benchmarks with issues:
   ProductsControllerBenchmark.DeleteProduct: DefaultJob
