@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsFastEndpointsBenchmark-20250914-210426</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.2, Windows 11 (10.0.26100.6584/24H2/2024Update/HudsonValley)
+Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 9.0.305
+  [Host]   : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
+  .NET 9.0 : .NET 9.0.9 (9.0.925.41916), X64 RyuJIT AVX2
+</code></pre>
+<pre><code>Job=.NET 9.0  Runtime=.NET 9.0  
+</code></pre>
+
+<table>
+<thead><tr><th>Method            </th><th>Mean  </th><th>Error </th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>ColdStartSingleRequest</td><td>35,097.18 &mu;s</td><td>2,815.901 &mu;s</td><td>8,302.75 &mu;s</td><td>33,530.07 &mu;s</td><td>363.6364</td><td>-</td><td>-</td><td>2672.45 KB</td>
+</tr><tr><td>CreateProduct</td><td>990.85 &mu;s</td><td>132.824 &mu;s</td><td>381.10 &mu;s</td><td>913.75 &mu;s</td><td>3.9063</td><td>-</td><td>-</td><td>16.83 KB</td>
+</tr><tr><td>DeleteProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>GetMediumDataset</td><td>31,386.89 &mu;s</td><td>1,335.387 &mu;s</td><td>3,831.47 &mu;s</td><td>31,017.80 &mu;s</td><td>1428.5714</td><td>1285.7143</td><td>1000.0000</td><td>10254.2 KB</td>
+</tr><tr><td>GetSingleProduct</td><td>73.21 &mu;s</td><td>6.448 &mu;s</td><td>17.87 &mu;s</td><td>66.80 &mu;s</td><td>2.9297</td><td>-</td><td>-</td><td>12.42 KB</td>
+</tr><tr><td>GetSmallDataset</td><td>3,431.47 &mu;s</td><td>53.436 &mu;s</td><td>104.22 &mu;s</td><td>3,399.77 &mu;s</td><td>109.3750</td><td>109.3750</td><td>109.3750</td><td>727.92 KB</td>
+</tr><tr><td>ConcurrentSingleRequests</td><td>977.26 &mu;s</td><td>32.051 &mu;s</td><td>90.92 &mu;s</td><td>962.79 &mu;s</td><td>121.0938</td><td>39.0625</td><td>-</td><td>587.11 KB</td>
+</tr><tr><td>ConcurrentSmallDatasets</td><td>5,969.46 &mu;s</td><td>188.199 &mu;s</td><td>548.99 &mu;s</td><td>5,977.93 &mu;s</td><td>500.0000</td><td>421.8750</td><td>312.5000</td><td>5311.04 KB</td>
+</tr><tr><td>UpdateProduct</td><td>126.37 &mu;s</td><td>8.970 &mu;s</td><td>24.86 &mu;s</td><td>118.53 &mu;s</td><td>3.9063</td><td>-</td><td>-</td><td>16.38 KB</td>
+</tr></tbody></table>
+</body>
+</html>

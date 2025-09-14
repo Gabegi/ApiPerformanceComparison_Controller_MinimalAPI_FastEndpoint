@@ -3,9 +3,6 @@ using FastEndpoints;
 
 namespace ApiPerformanceComparison.FastEndpoints.Endpoints
 {
-    // ====================
-    // Endpoints (No DTOs - Maximum Fair Comparison)
-    // ====================
 
     // GET /products/list
     public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
