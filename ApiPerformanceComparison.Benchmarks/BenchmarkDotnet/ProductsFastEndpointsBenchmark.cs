@@ -3,115 +3,120 @@ using FastEndpoints;
 
 namespace ApiPerformanceComparison.FastEndpoints.Endpoints
 {
-    // ====================
-    // Endpoints (No DTOs - Maximum Fair Comparison)
-    // ====================
-
-    // GET /products/list
-    public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
+    public class ProductsFastEndpointsBenchmark
     {
-        public override void Configure()
+
+
+        // ====================
+        // Endpoints (No DTOs - Maximum Fair Comparison)
+        // ====================
+
+        // GET /products/list
+        public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
         {
-            Get("/products/list");
-            AllowAnonymous();
+            public override void Configure()
+            {
+                Get("/products/list");
+                AllowAnonymous();
+            }
+
+            public override Task HandleAsync(CancellationToken ct)
+            {
+                var products = Resolve<List<Product>>();
+                var count = Query<int?>("count");
+                var take = count.GetValueOrDefault(50);
+
+                return SendOkAsync(products);
+            }
         }
 
-        public override Task HandleAsync(CancellationToken ct)
+        // GET /products/{id}
+        public class GetProductByIdEndpoint : EndpointWithoutRequest<Product>
         {
-            var products = Resolve<List<Product>>();
-            var count = Query<int?>("count");
-            var take = count.GetValueOrDefault(50);
+            public override void Configure()
+            {
+                Get("/products/{id:int}");
+                AllowAnonymous();
+            }
 
-            return SendOkAsync(products);
-        }
-    }
+            public override Task HandleAsync(CancellationToken ct)
+            {
+                var products = Resolve<List<Product>>();
+                var id = Route<int>("id");
+                var product = products.FirstOrDefault(p => p.Id == id);
 
-    // GET /products/{id}
-    public class GetProductByIdEndpoint : EndpointWithoutRequest<Product>
-    {
-        public override void Configure()
-        {
-            Get("/products/{id:int}");
-            AllowAnonymous();
-        }
-
-        public override Task HandleAsync(CancellationToken ct)
-        {
-            var products = Resolve<List<Product>>();
-            var id = Route<int>("id");
-            var product = products.FirstOrDefault(p => p.Id == id);
-
-            return product is null ? SendNotFoundAsync(ct) : SendOkAsync(product, ct);
-        }
-    }
-
-    // POST /products
-    public class CreateProductEndpoint : Endpoint<Product, Product>
-    {
-        public override void Configure()
-        {
-            Post("/products");
-            AllowAnonymous();
+                return product is null ? SendNotFoundAsync(ct) : SendOkAsync(product, ct);
+            }
         }
 
-        public override Task HandleAsync(Product newProduct, CancellationToken ct)
+        // POST /products
+        public class CreateProductEndpoint : Endpoint<Product, Product>
         {
-            var products = Resolve<List<Product>>();
+            public override void Configure()
+            {
+                Post("/products");
+                AllowAnonymous();
+            }
 
-            if (newProduct == null)
-                return SendErrorsAsync(cancellation: ct);
+            public override Task HandleAsync(Product newProduct, CancellationToken ct)
+            {
+                var products = Resolve<List<Product>>();
 
-            newProduct.Id = products.Any() ? products.Max(p => p.Id) + 1 : 1;
-            products.Add(newProduct);
+                if (newProduct == null)
+                    return SendErrorsAsync(cancellation: ct);
 
-            return SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct);
-        }
-    }
+                newProduct.Id = products.Any() ? products.Max(p => p.Id) + 1 : 1;
+                products.Add(newProduct);
 
-    // PUT /products/{id}
-    public class UpdateProductEndpoint : Endpoint<Product, Product>
-    {
-        public override void Configure()
-        {
-            Put("/products/{id:int}");
-            AllowAnonymous();
-        }
-
-        public override Task HandleAsync(Product updatedProduct, CancellationToken ct)
-        {
-            var id = Route<int>("id");
-            var products = Resolve<List<Product>>();
-            var existingProduct = products.FirstOrDefault(p => p.Id == id);
-
-            if (existingProduct is null)
-                return SendNotFoundAsync(ct);
-
-            existingProduct.Name = updatedProduct.Name;
-            existingProduct.Price = updatedProduct.Price;
-            return SendOkAsync(existingProduct, ct);
-        }
-    }
-
-    // DELETE /products/{id}
-    public class DeleteProductEndpoint : EndpointWithoutRequest
-    {
-        public override void Configure()
-        {
-            Delete("/products/{id:int}");
-            AllowAnonymous();
+                return SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct);
+            }
         }
 
-        public override Task HandleAsync(CancellationToken ct)
+        // PUT /products/{id}
+        public class UpdateProductEndpoint : Endpoint<Product, Product>
         {
-            var id = Route<int>("id");
-            var products = Resolve<List<Product>>();
-            var product = products.FirstOrDefault(p => p.Id == id);
+            public override void Configure()
+            {
+                Put("/products/{id:int}");
+                AllowAnonymous();
+            }
 
-            if (product is null)
-                return SendNotFoundAsync(ct);
+            public override Task HandleAsync(Product updatedProduct, CancellationToken ct)
+            {
+                var id = Route<int>("id");
+                var products = Resolve<List<Product>>();
+                var existingProduct = products.FirstOrDefault(p => p.Id == id);
 
-            products.Remove(product);
-            return SendNoContentAsync(ct);
+                if (existingProduct is null)
+                    return SendNotFoundAsync(ct);
+
+                existingProduct.Name = updatedProduct.Name;
+                existingProduct.Price = updatedProduct.Price;
+                return SendOkAsync(existingProduct, ct);
+            }
         }
-    }
+
+        // DELETE /products/{id}
+        public class DeleteProductEndpoint : EndpointWithoutRequest
+        {
+            public override void Configure()
+            {
+                Delete("/products/{id:int}");
+                AllowAnonymous();
+            }
+
+            public override Task HandleAsync(CancellationToken ct)
+            {
+                var id = Route<int>("id");
+                var products = Resolve<List<Product>>();
+                var product = products.FirstOrDefault(p => p.Id == id);
+
+                if (product is null)
+                    return SendNotFoundAsync(ct);
+
+                products.Remove(product);
+                return SendNoContentAsync(ct);
+            }
+        }
+     }
 }

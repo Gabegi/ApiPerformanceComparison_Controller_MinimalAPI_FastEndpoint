@@ -10,7 +10,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
     [GroupBenchmarksBy(BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule.ByCategory)]
     [CategoriesColumn]
-    public class ProductsApiBenchmark
+    public class ApiPerformanceComparison
     {
         private HttpClient? _controllerClient;
         private HttpClient? _minimalApiClient;
