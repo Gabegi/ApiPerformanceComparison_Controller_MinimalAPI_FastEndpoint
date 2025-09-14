@@ -13,6 +13,7 @@
     <PackageReference Include="BenchmarkDotNet.Diagnostics.dotTrace" Version="0.15.2" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.15.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.8" />
+    <PackageReference Include="NBomber" Version="6.1.1" />
   </ItemGroup>
 
   <ItemGroup>

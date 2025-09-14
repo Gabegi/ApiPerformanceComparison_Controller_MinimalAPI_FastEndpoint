@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
-namespace ApiPerformanceComparison.Benchmarks.Individual
+namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 {
     [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
-    [BenchmarkCategory("MinimalAPI")]
-    public class ProductsMinimalApiBenchmark
+    [BenchmarkCategory("Controller")]
+    public class ProductsControllerBenchmark
     {
         private HttpClient? _client;
-        private WebApplicationFactory<MinimalApi.MinimalEntryPoint>? _factory;
+        private WebApplicationFactory<Controllers.ProductsController>? _factory;
         private readonly Random _random = new();
 
         private const int SMALL_DATASET = 1_000;
@@ -22,7 +22,7 @@ namespace ApiPerformanceComparison.Benchmarks.Individual
         [GlobalSetup]
         public void Setup()
         {
-            _factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+            _factory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
@@ -154,12 +154,11 @@ namespace ApiPerformanceComparison.Benchmarks.Individual
         public async Task<Product?> ColdStartSingleRequest()
         {
             // Create fresh factory to measure true cold start
-            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+            using var factory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        var testProducts = QuickSeeder.SeedProducts(100);
-                        services.AddSingleton(testProducts);
+                        services.AddSingleton(QuickSeeder.SeedProducts(100));
                     }));
             using var client = factory.CreateClient();
             

@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
-namespace ApiPerformanceComparison.Benchmarks.Individual
+namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 {
     [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
-    [BenchmarkCategory("FastEndpoints")]
-    public class ProductsFastEndpointsBenchmark
+    [BenchmarkCategory("MinimalAPI")]
+    public class ProductsMinimalApiBenchmark
     {
         private HttpClient? _client;
-        private WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>? _factory;
+        private WebApplicationFactory<MinimalApi.MinimalEntryPoint>? _factory;
         private readonly Random _random = new();
 
         private const int SMALL_DATASET = 1_000;
@@ -22,16 +22,12 @@ namespace ApiPerformanceComparison.Benchmarks.Individual
         [GlobalSetup]
         public void Setup()
         {
-            _factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
+            _factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
                         var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
                         services.AddSingleton(testProducts);
-                        
-                        // CRITICAL: Register the IProductService properly for FastEndpoints
-                        services.AddSingleton<FastEndpoints.FastEndpointsEntryPoint.Endpoints.IProductService, 
-                                             ApiPerformanceComparison.FastEndpoints.Endpoints.InMemoryProductService>();
                     }));
 
             _client = _factory.CreateClient();
@@ -158,16 +154,12 @@ namespace ApiPerformanceComparison.Benchmarks.Individual
         public async Task<Product?> ColdStartSingleRequest()
         {
             // Create fresh factory to measure true cold start
-            using var factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
+            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
                         var testProducts = QuickSeeder.SeedProducts(100);
                         services.AddSingleton(testProducts);
-                        
-                        // CRITICAL: Register the IProductService for cold start test too
-                        services.AddSingleton<ApiPerformanceComparison.FastEndpoints.Endpoints.IProductService, 
-                                             ApiPerformanceComparison.FastEndpoints.Endpoints.InMemoryProductService>();
                     }));
             using var client = factory.CreateClient();
             

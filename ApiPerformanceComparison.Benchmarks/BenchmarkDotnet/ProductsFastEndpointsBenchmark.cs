@@ -1,18 +1,20 @@
+using ApiPerformanceComparison.FastEndpoints.Endpoints;
+using ApiPerformanceComparison.FastEndpoints.Interfaces;
 using ApiPerformanceComparison.Shared;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
-namespace ApiPerformanceComparison.Benchmarks.Individual
+namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 {
     [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
-    [BenchmarkCategory("Controller")]
-    public class ProductsControllerBenchmark
+    [BenchmarkCategory("FastEndpoints")]
+    public class ProductsFastEndpointsBenchmark
     {
         private HttpClient? _client;
-        private WebApplicationFactory<Controllers.ProductsController>? _factory;
+        private WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>? _factory;
         private readonly Random _random = new();
 
         private const int SMALL_DATASET = 1_000;
@@ -22,12 +24,15 @@ namespace ApiPerformanceComparison.Benchmarks.Individual
         [GlobalSetup]
         public void Setup()
         {
-            _factory = new WebApplicationFactory<Controllers.ProductsController>()
+            _factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
                         var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
                         services.AddSingleton(testProducts);
+                        
+                        // CRITICAL: Register the IProductService properly for FastEndpoints
+                        services.AddSingleton<IProductService, InMemoryProductService>();
                     }));
 
             _client = _factory.CreateClient();
@@ -154,11 +159,15 @@ namespace ApiPerformanceComparison.Benchmarks.Individual
         public async Task<Product?> ColdStartSingleRequest()
         {
             // Create fresh factory to measure true cold start
-            using var factory = new WebApplicationFactory<Controllers.ProductsController>()
+            using var factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        services.AddSingleton(QuickSeeder.SeedProducts(100));
+                        var testProducts = QuickSeeder.SeedProducts(100);
+                        services.AddSingleton(testProducts);
+                        
+                        // CRITICAL: Register the IProductService for cold start test too
+                        services.AddSingleton<IProductService, InMemoryProductService>();
                     }));
             using var client = factory.CreateClient();
             

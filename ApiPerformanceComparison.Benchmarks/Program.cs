@@ -1,4 +1,4 @@
-﻿using ApiPerformanceComparison.Benchmarks;
+﻿using ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
 using BenchmarkDotNet.Running;
 
 BenchmarkRunner.Run<ProductsControllerBenchmark>();

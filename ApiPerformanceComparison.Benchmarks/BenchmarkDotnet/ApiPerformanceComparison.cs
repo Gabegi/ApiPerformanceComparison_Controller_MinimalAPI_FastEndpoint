@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
-namespace ApiPerformanceComparison.Benchmarks;
+namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
 
 [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
