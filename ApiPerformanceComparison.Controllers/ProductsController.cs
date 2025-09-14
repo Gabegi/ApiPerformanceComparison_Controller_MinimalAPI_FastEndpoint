@@ -26,7 +26,8 @@ namespace ApiPerformanceComparison.Controllers
         [HttpGet("list")]
         public IEnumerable<Product> GetList([FromQuery] int count = 50)
         {
-            return _products.Take(count);
+            // to list() to make it fair
+            return _products.Take(count).ToList();
         }
 
         // POST /products

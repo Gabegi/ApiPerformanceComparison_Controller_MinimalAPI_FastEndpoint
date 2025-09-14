@@ -23,7 +23,7 @@ app.MapGet("/products/{id:int}", (int id, List<Product> products) =>
 app.MapGet("/products/list", (int? count, List<Product> products) =>
 {
     var take = count.GetValueOrDefault(50);
-    return Results.Ok(products.Take(take));
+    return Results.Ok(products);
 });
 
 // POST /products
@@ -64,10 +64,8 @@ app.MapDelete("/products/{id:int}", (int id, List<Product> products) =>
 
 app.Run();
 
-//// This class is needed for WebApplicationFactory to work with minimal APIs
+// This class is needed for WebApplicationFactory to work with minimal APIs
 namespace ApiPerformanceComparison.MinimalApi
 {
     public sealed class MinimalEntryPoint { }
 }
-
-//public partial class Program { }

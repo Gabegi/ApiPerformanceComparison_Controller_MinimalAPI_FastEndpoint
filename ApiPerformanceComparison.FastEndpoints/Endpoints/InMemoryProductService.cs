@@ -16,13 +16,13 @@ namespace ApiPerformanceComparison.FastEndpoints.Endpoints
             AllowAnonymous();
         }
 
-        public override Task HandleAsync(CancellationToken ct)
+        public override async Task HandleAsync(CancellationToken ct)
         {
             var products = Resolve<List<Product>>();
             var count = Query<int?>("count");
             var take = count.GetValueOrDefault(50);
 
-            return SendOkAsync(products);
+            await SendOkAsync(products.Take(take).ToList(), ct);
         }
     }
 
@@ -35,13 +35,16 @@ namespace ApiPerformanceComparison.FastEndpoints.Endpoints
             AllowAnonymous();
         }
 
-        public override Task HandleAsync(CancellationToken ct)
+        public override async Task HandleAsync(CancellationToken ct)
         {
             var products = Resolve<List<Product>>();
             var id = Route<int>("id");
             var product = products.FirstOrDefault(p => p.Id == id);
 
-            return product is null ? SendNotFoundAsync(ct) : SendOkAsync(product, ct);
+            if (product is null)
+                await SendNotFoundAsync(ct);
+            else
+                await SendOkAsync(product, ct);
         }
     }
 
@@ -54,17 +57,20 @@ namespace ApiPerformanceComparison.FastEndpoints.Endpoints
             AllowAnonymous();
         }
 
-        public override Task HandleAsync(Product newProduct, CancellationToken ct)
+        public override async Task HandleAsync(Product newProduct, CancellationToken ct)
         {
             var products = Resolve<List<Product>>();
 
             if (newProduct == null)
-                return (Task)Results.BadRequest();
+            {
+                await SendErrorsAsync(cancellation: ct);
+                return;
+            }
 
             newProduct.Id = products.Any() ? products.Max(p => p.Id) + 1 : 1;
             products.Add(newProduct);
 
-            return SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct);
+            await SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct, cancellation: ct);
         }
     }
 
@@ -77,18 +83,20 @@ namespace ApiPerformanceComparison.FastEndpoints.Endpoints
             AllowAnonymous();
         }
 
-        public override Task HandleAsync(Product updatedProduct, CancellationToken ct)
+        public override async Task HandleAsync(Product updatedProduct, CancellationToken ct)
         {
             var id = Route<int>("id");
             var products = Resolve<List<Product>>();
             var existingProduct = products.FirstOrDefault(p => p.Id == id);
 
             if (existingProduct is null)
-                return SendNotFoundAsync(ct);
-
-            existingProduct.Name = updatedProduct.Name;
-            existingProduct.Price = updatedProduct.Price;
-            return SendOkAsync(existingProduct, ct);
+                await SendNotFoundAsync(ct);
+            else
+            {
+                existingProduct.Name = updatedProduct.Name;
+                existingProduct.Price = updatedProduct.Price;
+                await SendOkAsync(existingProduct, ct);
+            }
         }
     }
 
@@ -101,17 +109,19 @@ namespace ApiPerformanceComparison.FastEndpoints.Endpoints
             AllowAnonymous();
         }
 
-        public override Task HandleAsync(CancellationToken ct)
+        public override async Task HandleAsync(CancellationToken ct)
         {
             var id = Route<int>("id");
             var products = Resolve<List<Product>>();
             var product = products.FirstOrDefault(p => p.Id == id);
 
             if (product is null)
-                return SendNotFoundAsync(ct);
-
-            products.Remove(product);
-            return SendNoContentAsync(ct);
+                await SendNotFoundAsync(ct);
+            else
+            {
+                products.Remove(product);
+                await SendNoContentAsync(ct);
+            }
         }
     }
 }
