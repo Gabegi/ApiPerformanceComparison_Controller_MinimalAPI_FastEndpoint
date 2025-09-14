@@ -1,186 +1,117 @@
-using ApiPerformanceComparison.FastEndpoints.Endpoints;
-using ApiPerformanceComparison.FastEndpoints.Interfaces;
 using ApiPerformanceComparison.Shared;
-using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
+using FastEndpoints;
 
-namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
+namespace ApiPerformanceComparison.FastEndpoints.Endpoints
 {
-    [MemoryDiagnoser]
-    [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
-    [BenchmarkCategory("FastEndpoints")]
-    public class ProductsFastEndpointsBenchmark
+    // ====================
+    // Endpoints (No DTOs - Maximum Fair Comparison)
+    // ====================
+
+    // GET /products/list
+    public class GetProductsListEndpoint : EndpointWithoutRequest<List<Product>>
     {
-        private HttpClient? _client;
-        private WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>? _factory;
-        private readonly Random _random = new();
-
-        private const int SMALL_DATASET = 1_000;
-        private const int MEDIUM_DATASET = 10_000;
-        private const int CONCURRENT_REQUESTS = 50;
-
-        [GlobalSetup]
-        public void Setup()
+        public override void Configure()
         {
-            _factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
-                        services.AddSingleton(testProducts);
-                        
-                        // CRITICAL: Register the IProductService properly for FastEndpoints
-                        services.AddSingleton<IProductService, InMemoryProductService>();
-                    }));
-
-            _client = _factory.CreateClient();
-            
-            // Add warmup to eliminate JIT compilation effects
-            WarmupAsync().GetAwaiter().GetResult();
+            Get("/products/list");
+            AllowAnonymous();
         }
 
-        private async Task WarmupAsync()
+        public override Task HandleAsync(CancellationToken ct)
         {
-            // Warmup requests to stabilize performance
-            for (int i = 0; i < 3; i++)
-            {
-                var response = await _client!.GetAsync("/products/1");
-                response.Dispose();
-            }
+            var products = Resolve<List<Product>>();
+            var count = Query<int?>("count");
+            var take = count.GetValueOrDefault(50);
+
+            return SendOkAsync(products);
+        }
+    }
+
+    // GET /products/{id}
+    public class GetProductByIdEndpoint : EndpointWithoutRequest<Product>
+    {
+        public override void Configure()
+        {
+            Get("/products/{id:int}");
+            AllowAnonymous();
         }
 
-        [Benchmark]
-        [BenchmarkCategory("SingleRequest")]
-        public async Task<Product?> GetSingleProduct()
+        public override Task HandleAsync(CancellationToken ct)
         {
-            // Use random ID to prevent caching effects
-            var productId = _random.Next(1, 1000);
-            var response = await _client!.GetAsync($"/products/{productId}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<Product>();
+            var products = Resolve<List<Product>>();
+            var id = Route<int>("id");
+            var product = products.FirstOrDefault(p => p.Id == id);
+
+            return product is null ? SendNotFoundAsync(ct) : SendOkAsync(product, ct);
+        }
+    }
+
+    // POST /products
+    public class CreateProductEndpoint : Endpoint<Product, Product>
+    {
+        public override void Configure()
+        {
+            Post("/products");
+            AllowAnonymous();
         }
 
-        [Benchmark]
-        [BenchmarkCategory("SmallDataset")]
-        public async Task<List<Product>?> GetSmallDataset()
+        public override Task HandleAsync(Product newProduct, CancellationToken ct)
         {
-            var response = await _client!.GetAsync($"/products/list?count={SMALL_DATASET}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Product>>();
+            var products = Resolve<List<Product>>();
+
+            if (newProduct == null)
+                return SendErrorsAsync(cancellation: ct);
+
+            newProduct.Id = products.Any() ? products.Max(p => p.Id) + 1 : 1;
+            products.Add(newProduct);
+
+            return SendCreatedAtAsync<GetProductByIdEndpoint>(new { id = newProduct.Id }, newProduct);
+        }
+    }
+
+    // PUT /products/{id}
+    public class UpdateProductEndpoint : Endpoint<Product, Product>
+    {
+        public override void Configure()
+        {
+            Put("/products/{id:int}");
+            AllowAnonymous();
         }
 
-        [Benchmark]
-        [BenchmarkCategory("MediumDataset")]
-        public async Task<List<Product>?> GetMediumDataset()
+        public override Task HandleAsync(Product updatedProduct, CancellationToken ct)
         {
-            var response = await _client!.GetAsync($"/products/list?count={MEDIUM_DATASET}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Product>>();
+            var id = Route<int>("id");
+            var products = Resolve<List<Product>>();
+            var existingProduct = products.FirstOrDefault(p => p.Id == id);
+
+            if (existingProduct is null)
+                return SendNotFoundAsync(ct);
+
+            existingProduct.Name = updatedProduct.Name;
+            existingProduct.Price = updatedProduct.Price;
+            return SendOkAsync(existingProduct, ct);
+        }
+    }
+
+    // DELETE /products/{id}
+    public class DeleteProductEndpoint : EndpointWithoutRequest
+    {
+        public override void Configure()
+        {
+            Delete("/products/{id:int}");
+            AllowAnonymous();
         }
 
-        [Benchmark]
-        [BenchmarkCategory("CreateOperation")]
-        public async Task CreateProduct()
+        public override Task HandleAsync(CancellationToken ct)
         {
-            var req = new CreateProductRequest { 
-                Name = $"Product {_random.Next()}", // Unique name
-                Price = (decimal)_random.NextDouble() * 100 
-            };
-            var response = await _client!.PostAsJsonAsync("/products", req);
-            response.EnsureSuccessStatusCode();
-            response.Dispose();
-        }
+            var id = Route<int>("id");
+            var products = Resolve<List<Product>>();
+            var product = products.FirstOrDefault(p => p.Id == id);
 
-        [Benchmark]
-        [BenchmarkCategory("UpdateOperation")]
-        public async Task UpdateProduct()
-        {
-            var productId = _random.Next(1, 100); // Random existing product
-            var req = new UpdateProductRequest { 
-                Name = $"Updated Product {_random.Next()}", 
-                Price = (decimal)_random.NextDouble() * 100 
-            };
-            var response = await _client!.PutAsJsonAsync($"/products/{productId}", req);
-            response.EnsureSuccessStatusCode();
-            response.Dispose();
-        }
+            if (product is null)
+                return SendNotFoundAsync(ct);
 
-        [Benchmark]
-        [BenchmarkCategory("DeleteOperation")]
-        public async Task DeleteProduct()
-        {
-            var productId = _random.Next(1, 100);
-            var response = await _client!.DeleteAsync($"/products/{productId}");
-            response.EnsureSuccessStatusCode();
-            response.Dispose();
-        }
-
-        [Benchmark]
-        [BenchmarkCategory("Throughput")]
-        public async Task ConcurrentSingleRequests()
-        {
-            var tasks = Enumerable.Range(0, CONCURRENT_REQUESTS)
-                .Select(_ =>
-                {
-                    var productId = _random.Next(1, 1000);
-                    return _client!.GetAsync($"/products/{productId}");
-                });
-
-            var responses = await Task.WhenAll(tasks);
-            
-            foreach (var response in responses)
-            {
-                response.EnsureSuccessStatusCode();
-                response.Dispose();
-            }
-        }
-
-        [Benchmark]
-        [BenchmarkCategory("Throughput")]
-        public async Task ConcurrentSmallDatasets()
-        {
-            var tasks = Enumerable.Range(0, 10)
-                .Select(_ => _client!.GetAsync($"/products/list?count={SMALL_DATASET}"));
-
-            var responses = await Task.WhenAll(tasks);
-            
-            foreach (var response in responses)
-            {
-                response.EnsureSuccessStatusCode();
-                response.Dispose();
-            }
-        }
-
-        // Separate cold start test
-        [Benchmark]
-        [BenchmarkCategory("ColdStart")]
-        public async Task<Product?> ColdStartSingleRequest()
-        {
-            // Create fresh factory to measure true cold start
-            using var factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        var testProducts = QuickSeeder.SeedProducts(100);
-                        services.AddSingleton(testProducts);
-                        
-                        // CRITICAL: Register the IProductService for cold start test too
-                        services.AddSingleton<IProductService, InMemoryProductService>();
-                    }));
-            using var client = factory.CreateClient();
-            
-            var response = await client.GetAsync("/products/1");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<Product>();
-        }
-
-        [GlobalCleanup]
-        public void Cleanup()
-        {
-            _client?.Dispose();
-            _factory?.Dispose();
+            products.Remove(product);
+            return SendNoContentAsync(ct);
         }
     }
 }
