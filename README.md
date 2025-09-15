@@ -6,30 +6,50 @@
 
     Same host, same runtime, same payloads, same DB. Only the web framework surface differs.
 
-    # Benchmarks
+🚀 Benchmarks
+What does performance mean?
 
-    What does performance mean?
+In the context of APIs, performance measures how efficiently an API handles requests under different conditions. It’s not only about raw speed, but also about resource usage and scalability.
 
-    ## Micro-benchmarks
+🧪 Micro-benchmarks
 
-    Tool: BenchmarkDotNet
+Tool: BenchmarkDotNet
 
-    Scenarios:
+All tests were run on a controlled environment with consistent hardware/software setup.
 
-    - Simple GET requests (no parameters)
-    - GET with route parameters (e.g., /api/products/{id})
-    - GET with query parameters (e.g., /api/products?category=electronics&page=1)
-    - POST requests with JSON payload
-    - PUT/PATCH requests with validation
+📌 Scenarios
 
-    Metrics:
+We tested common API operations across different frameworks (Controllers, Minimal APIs, FastEndpoints):
 
-    - Throughput (requests/second)
-    - Latency (mean, median, P95, P99)
-    - Memory allocation per request
-    - CPU usage
-    - Startup time
-    - First request time (cold start)
+Simple GET request – returning a small response with no parameters.
+
+GET with route parameters – e.g. /api/products/{id}.
+
+GET with query parameters – e.g. /api/products?category=electronics&page=1.
+
+POST request with JSON payload – inserting/processing data.
+
+PUT/PATCH with validation – updating data with input validation.
+
+📊 Metrics Collected
+
+For each scenario, we measured:
+
+Throughput – requests per second (higher = better).
+
+Latency – response time distributions: mean, median, P95, P99 (lower = better).
+
+Memory allocations – bytes allocated per request.
+
+CPU usage – efficiency under load.
+
+Startup time – how quickly the API can start serving requests.
+
+Cold start latency – time to process the very first request after startup.
+
+✅ Why this matters
+
+These benchmarks help compare frameworks not only for raw response speed, but also for efficiency and scalability. A framework that is slightly slower but uses less memory or scales better under concurrency may be a better fit depending on workload.
 
     Scenarios:
 
