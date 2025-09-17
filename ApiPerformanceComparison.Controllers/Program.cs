@@ -2,27 +2,20 @@ using ApiPerformanceComparison.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// API
+// Use Dictionary for O(1) lookups - same data structure for all frameworks
+var productsDict = QuickSeeder.SeedProducts(100_000).ToDictionary(p => p.Id);
+var maxId = new AtomicCounter(productsDict.Keys.Max());
+
+builder.Services.AddSingleton(productsDict);
+builder.Services.AddSingleton(maxId);
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 if (!app.Environment.IsEnvironment("Testing"))
 {
     app.UseHttpsRedirection();
 }
+
 app.MapControllers();
-
 app.Run();
-
-//namespace ApiPerformanceComparison.Controllers
-//{
-//    public sealed class ControllersEntryPoint { }
-//}
