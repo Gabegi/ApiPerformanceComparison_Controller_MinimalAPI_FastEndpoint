@@ -334,3 +334,7 @@ Academic/research comparisons
 ```
 
      Small Improvements to Your Original Approach:Keep your individual tests, but add these small fixes
+
+# Async
+
+We don't have any async operations so we removed the async/await

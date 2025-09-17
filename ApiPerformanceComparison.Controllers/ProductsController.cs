@@ -3,63 +3,67 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiPerformanceComparison.Controllers
 {
-[ApiController]
-[Route("products")]
-public class ProductsController : ControllerBase
-{
-    private readonly Dictionary<int, Product> _products;
-    private readonly AtomicCounter _counter;
-
-    public ProductsController(Dictionary<int, Product> products, AtomicCounter counter)
+    [ApiController]
+    [Route("products")]
+    public class ProductsController : ControllerBase
     {
-        _products = products;
-        _counter = counter;
-    }
+        private readonly Dictionary<int, Product> _products;
+        private readonly AtomicCounter _counter;
 
-    [HttpGet("list")]
-    public async Task<IActionResult> GetProducts(int? count = 50)
-    {
-        var take = count.GetValueOrDefault(50);
-        var result = _products.Values.Take(take).ToList();
-        return Ok(result);
-    }
+        public ProductsController(Dictionary<int, Product> products, AtomicCounter counter)
+        {
+            _products = products;
+            _counter = counter;
+        }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetProduct(int id)
-    {
-        if (_products.TryGetValue(id, out var product))
-            return Ok(product);
-        return NotFound();
-    }
+        [HttpGet("list")]
+        public IActionResult GetProducts(int? count = 50)
+        {
+            var take = count.GetValueOrDefault(50);
+            var result = _products.Values.Take(take).ToList();
+            return Ok(result);
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateProduct(Product newProduct)
-    {
-        if (newProduct == null)
-            return BadRequest();
+        [HttpGet("{id:int}")]
+        public IActionResult GetProduct(int id)
+        {
+            if (_products.TryGetValue(id, out var product))
+                return Ok(product);
 
-        newProduct.Id = _counter.GetNext();
-        _products[newProduct.Id] = newProduct;
-        return Created($"/products/{newProduct.Id}", newProduct);
-    }
-
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateProduct(int id, Product updatedProduct)
-    {
-        if (!_products.TryGetValue(id, out var existingProduct))
             return NotFound();
+        }
 
-        existingProduct.Name = updatedProduct.Name;
-        existingProduct.Price = updatedProduct.Price;
-        return Ok(existingProduct);
-    }
+        [HttpPost]
+        public IActionResult CreateProduct(Product newProduct)
+        {
+            if (newProduct == null)
+                return BadRequest();
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteProduct(int id)
-    {
-        if (_products.Remove(id))
-            return NoContent();
-        return NotFound();
+            newProduct.Id = _counter.GetNext();
+            _products[newProduct.Id] = newProduct;
+
+            return Created($"/products/{newProduct.Id}", newProduct);
+        }
+
+        [HttpPut("{id:int}")]
+        public IActionResult UpdateProduct(int id, Product updatedProduct)
+        {
+            if (!_products.TryGetValue(id, out var existingProduct))
+                return NotFound();
+
+            existingProduct.Name = updatedProduct.Name;
+            existingProduct.Price = updatedProduct.Price;
+
+            return Ok(existingProduct);
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            if (_products.Remove(id))
+                return NoContent();
+
+            return NotFound();
+        }
     }
-}
 }
