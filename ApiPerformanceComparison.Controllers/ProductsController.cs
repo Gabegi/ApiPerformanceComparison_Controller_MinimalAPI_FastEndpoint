@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiPerformanceComparison.Controllers
 {
-    [ApiController]
+[ApiController]
 [Route("products")]
 public class ProductsController : ControllerBase
 {
@@ -17,7 +17,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("list")]
-    public IActionResult GetProducts(int? count = 50)
+    public async Task<IActionResult> GetProducts(int? count = 50)
     {
         var take = count.GetValueOrDefault(50);
         var result = _products.Values.Take(take).ToList();
@@ -25,7 +25,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public IActionResult GetProduct(int id)
+    public async Task<IActionResult> GetProduct(int id)
     {
         if (_products.TryGetValue(id, out var product))
             return Ok(product);
@@ -33,7 +33,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateProduct(Product newProduct)
+    public async Task<IActionResult> CreateProduct(Product newProduct)
     {
         if (newProduct == null)
             return BadRequest();
@@ -44,7 +44,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public IActionResult UpdateProduct(int id, Product updatedProduct)
+    public async Task<IActionResult> UpdateProduct(int id, Product updatedProduct)
     {
         if (!_products.TryGetValue(id, out var existingProduct))
             return NotFound();
@@ -55,7 +55,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult DeleteProduct(int id)
+    public async Task<IActionResult> DeleteProduct(int id)
     {
         if (_products.Remove(id))
             return NoContent();
