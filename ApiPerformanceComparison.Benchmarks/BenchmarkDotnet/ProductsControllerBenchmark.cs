@@ -1,4 +1,5 @@
 using ApiPerformanceComparison.Shared;
+using ApiPerformanceComparison.Shared.Requests;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -79,7 +80,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         [BenchmarkCategory("CreateOperation")]
         public async Task CreateProduct()
         {
-            var req = new CreateProductRequest { 
+            var req = new CreateProductCall { 
                 Name = $"Product {_random.Next()}", // Unique name
                 Price = (decimal)_random.NextDouble() * 100 
             };
@@ -93,7 +94,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         public async Task UpdateProduct()
         {
             var productId = _random.Next(1, 100); // Random existing product
-            var req = new UpdateProductRequest { 
+            var req = new UpdateProductCall { 
                 Name = $"Updated Product {_random.Next()}", 
                 Price = (decimal)_random.NextDouble() * 100 
             };
@@ -174,4 +175,6 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             _factory?.Dispose();
         }
     }
+
+    
 }

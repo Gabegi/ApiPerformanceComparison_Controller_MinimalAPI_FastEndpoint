@@ -93,7 +93,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         public async Task UpdateProduct()
         {
             var productId = _random.Next(1, 100); // Random existing product
-            var req = new FastEndpoints.UpdateProductRequest { 
+            var req = new FastEndpoints.UpdateProductCall { 
                 Name = $"Updated Product {_random.Next()}", 
                 Price = (decimal)_random.NextDouble() * 100 
             };
