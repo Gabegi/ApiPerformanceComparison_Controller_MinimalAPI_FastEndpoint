@@ -1,7 +1,6 @@
 
 using FastEndpoints;
 using ApiPerformanceComparison.Shared;
-
 // GetProductsList Endpoint
 public class GetProductsListRequest
 {
@@ -10,20 +9,18 @@ public class GetProductsListRequest
 
 public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Product>>
 {
-    private Dictionary<int, Product> _products = null!;
-
     public override void Configure()
     {
         Get("/products/list");
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
+    public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
     {
-        _products = Resolve<Dictionary<int, Product>>();
+        var products = Resolve<Dictionary<int, Product>>();
         var take = req.Count.GetValueOrDefault(50);
-        var result = _products.Values.Take(take).ToList();
-        await SendOkAsync(result, ct);
+        var result = products.Values.Take(take).ToList();
+        return SendOkAsync(result, ct);
     }
 }
 
@@ -41,14 +38,14 @@ public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(GetProductRequest req, CancellationToken ct)
+    public override Task HandleAsync(GetProductRequest req, CancellationToken ct)
     {
         var products = Resolve<Dictionary<int, Product>>();
-        
+
         if (products.TryGetValue(req.Id, out var product))
-            await SendOkAsync(product, ct);
-        else
-            await SendNotFoundAsync(ct);
+            return SendOkAsync(product, ct);
+
+        return SendNotFoundAsync(ct);
     }
 }
 
@@ -61,21 +58,18 @@ public class CreateProductEndpoint : Endpoint<Product, Product>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(Product req, CancellationToken ct)
+    public override Task HandleAsync(Product req, CancellationToken ct)
     {
         if (req == null)
-        {
-            await SendErrorsAsync(cancellation: ct);
-            return;
-        }
+            return SendErrorsAsync(cancellation: ct);
 
         var products = Resolve<Dictionary<int, Product>>();
         var counter = Resolve<AtomicCounter>();
-        
+
         req.Id = counter.GetNext();
         products[req.Id] = req;
-        
-        await SendCreatedAtAsync<GetProductEndpoint>(new { id = req.Id }, req, cancellation: ct);
+
+        return SendCreatedAtAsync<GetProductEndpoint>(new { id = req.Id }, req, cancellation: ct);
     }
 }
 
@@ -95,20 +89,17 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(UpdateProductRequest req, CancellationToken ct)
+    public override Task HandleAsync(UpdateProductRequest req, CancellationToken ct)
     {
         var products = Resolve<Dictionary<int, Product>>();
-        
+
         if (!products.TryGetValue(req.Id, out var existingProduct))
-        {
-            await SendNotFoundAsync(ct);
-            return;
-        }
+            return SendNotFoundAsync(ct);
 
         existingProduct.Name = req.Name;
         existingProduct.Price = req.Price;
-        
-        await SendOkAsync(existingProduct, ct);
+
+        return SendOkAsync(existingProduct, ct);
     }
 }
 
@@ -126,18 +117,13 @@ public class DeleteProductEndpoint : Endpoint<DeleteProductRequest>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(DeleteProductRequest req, CancellationToken ct)
+    public override Task HandleAsync(DeleteProductRequest req, CancellationToken ct)
     {
         var products = Resolve<Dictionary<int, Product>>();
-        
-        if (products.Remove(req.Id))
-            await SendNoContentAsync(ct);
-        else
-            await SendNotFoundAsync(ct);
-    }
-}
 
-namespace ApiPerformanceComparison.FastEndpoints
-{
-    public sealed class FastEndpointsEntryPoint { }
+        if (products.Remove(req.Id))
+            return SendNoContentAsync(ct);
+
+        return SendNotFoundAsync(ct);
+    }
 }
