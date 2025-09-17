@@ -1,0 +1,3 @@
+namespace ApiPerformanceComparison.FastEndpoints.Requests;
+
+

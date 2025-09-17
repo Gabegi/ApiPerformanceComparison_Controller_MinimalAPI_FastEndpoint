@@ -1,12 +1,15 @@
 
 using FastEndpoints;
 using ApiPerformanceComparison.Shared;
-// GetProductsList Endpoint
-public class GetProductsListRequest
+using ApiPerformanceComparison.FastEndpoints.Requests;
+
+// entry point
+namespace ApiPerformanceComparison.FastEndpoints
 {
-    public int? Count { get; set; } = 50;
+    public sealed class FastEndpointsEntryPoint { }
 }
 
+// GetProductsList Endpoint
 public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Product>>
 {
     public override void Configure()
@@ -25,11 +28,6 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Pro
 }
 
 // GetProduct Endpoint
-public class GetProductRequest
-{
-    public int Id { get; set; }
-}
-
 public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
 {
     public override void Configure()
@@ -61,6 +59,7 @@ public class CreateProductEndpoint : Endpoint<Product, Product>
     public override Task HandleAsync(Product req, CancellationToken ct)
     {
         if (req == null)
+        
             return SendErrorsAsync(cancellation: ct);
 
         var products = Resolve<Dictionary<int, Product>>();
@@ -74,13 +73,6 @@ public class CreateProductEndpoint : Endpoint<Product, Product>
 }
 
 // UpdateProduct Endpoint
-public class UpdateProductRequest
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-}
-
 public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
 {
     public override void Configure()
@@ -104,11 +96,6 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
 }
 
 // DeleteProduct Endpoint
-public class DeleteProductRequest
-{
-    public int Id { get; set; }
-}
-
 public class DeleteProductEndpoint : Endpoint<DeleteProductRequest>
 {
     public override void Configure()
