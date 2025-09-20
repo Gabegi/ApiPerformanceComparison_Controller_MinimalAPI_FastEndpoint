@@ -338,3 +338,53 @@ Academic/research comparisons
 # Async
 
 We don't have any async operations so we removed the async/await
+
+# List vs dictionary for seed data
+
+1️⃣ Dictionary (Dictionary<int, Product>)
+
+Pros:
+
+O(1) lookups by ID → GET /products/{id}, PUT, DELETE are very fast, even with 10k+ items.
+
+Deleting and updating by key is also O(1).
+
+Thread-safe reads if you only read (though writes still need attention in multi-threaded scenarios).
+
+Cons:
+
+Uses more memory than a List because it stores internal buckets for hashing.
+
+Iteration order is not guaranteed (though Values.Take(count) works fine).
+
+Use case: Perfect for APIs where you often look up by id or modify items by id. This is exactly your scenario.
+
+2️⃣ List (List<Product>)
+
+Pros:
+
+Simpler memory model, less overhead.
+
+Iteration is straightforward and ordered.
+
+Cons:
+
+Lookup by ID is O(n) → GET /products/{id} requires a linear search.
+
+Delete and update by ID also O(n) because you have to find the index first.
+
+For small datasets (<1k items), this is okay; for large datasets, it will slow down significantly under concurrent requests.
+
+Use case: Fine if you mostly return all products or small subsets, and don’t often need id-based operations.
+
+✅ Recommendation for your API
+
+Since your API exposes:
+
+GET /products/{id}
+
+PUT /products/{id}
+
+DELETE /products/{id}
+
+…and you have 10k+ products, you definitely want Dictionary<int, Product>. Otherwise every single request by ID will loop through thousands of items — not great for performance.

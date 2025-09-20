@@ -27,7 +27,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100);
+                        var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100).ToDictionary(p => p.Id);
                         services.AddSingleton(testProducts);
                     }));
 
@@ -159,7 +159,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        services.AddSingleton(QuickSeeder.SeedProducts(100));
+                        services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
                     }));
             using var client = factory.CreateClient();
             

@@ -11,7 +11,7 @@ namespace ApiPerformanceComparison.FastEndpoints
 }
 
 // GetProductsList Endpoint
-public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Product>>
+public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumerable<Product>>
 {
     public override void Configure()
     {

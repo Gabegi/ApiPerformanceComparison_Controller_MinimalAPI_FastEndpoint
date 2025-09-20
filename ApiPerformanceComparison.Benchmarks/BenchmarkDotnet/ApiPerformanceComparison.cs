@@ -93,7 +93,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        services.AddSingleton(QuickSeeder.SeedProducts(100));
+                        services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
                     }));
             using var client = factory.CreateClient();
             
@@ -110,7 +110,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        services.AddSingleton(QuickSeeder.SeedProducts(100));
+                        services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
                     }));
             using var client = factory.CreateClient();
             
@@ -127,7 +127,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        services.AddSingleton(QuickSeeder.SeedProducts(100));
+                        services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
                     }));
             using var client = factory.CreateClient();
             
