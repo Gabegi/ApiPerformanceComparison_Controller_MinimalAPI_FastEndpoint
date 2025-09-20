@@ -28,10 +28,11 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
         [GlobalSetup]
         public void Setup()
         {
-            var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 1000);
+            var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100)
+                              .ToDictionary(p => p.Id);
 
             // Setup Controller API
-            _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
+        _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {

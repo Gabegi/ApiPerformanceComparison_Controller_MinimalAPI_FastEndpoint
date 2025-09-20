@@ -16,11 +16,8 @@ if (!app.Environment.IsEnvironment("Testing"))
     app.UseHttpsRedirection();
 }
 
-app.MapGet("/products/list", async (int count, Dictionary<int, Product> products) => 
-{
-    var result = products.Values.Take(count).ToList();
-    return Results.Ok(result);
-});
+app.MapGet("/products/list", (int count, Dictionary<int, Product> products) => 
+    Results.Ok(products.Values.Take(count)));
 
 app.MapGet("/products/{id:int}", async (int id, Dictionary<int, Product> products) => 
 {

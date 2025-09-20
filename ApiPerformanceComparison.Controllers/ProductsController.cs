@@ -19,7 +19,7 @@ namespace ApiPerformanceComparison.Controllers
         [HttpGet("list")]
         public IActionResult GetProducts(int count)
         {
-            var result = _products.Values.Take(count).ToList();
+            var result = _products.Values.Take(count);
             return Ok(result);
         }
 
