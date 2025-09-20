@@ -3,7 +3,7 @@ using ApiPerformanceComparison.Shared;
 var builder = WebApplication.CreateBuilder(args);
 
 // Use Dictionary for O(1) lookups - same data structure as Controller
-var productsDict = QuickSeeder.SeedProducts(100_000).ToDictionary(p => p.Id);
+var productsDict = QuickSeeder.SeedProducts(50_000).ToDictionary(p => p.Id);
 var maxId = new AtomicCounter(productsDict.Keys.Max());
 
 builder.Services.AddSingleton(productsDict);
@@ -16,8 +16,7 @@ if (!app.Environment.IsEnvironment("Testing"))
     app.UseHttpsRedirection();
 }
 
-// All async without Task.FromResult wrapping
-app.MapGet("/products/list", async (int? count, Dictionary<int, Product> products) => 
+app.MapGet("/products/list", async (int count, Dictionary<int, Product> products) => 
 {
     var result = products.Values.Take(count).ToList();
     return Results.Ok(result);

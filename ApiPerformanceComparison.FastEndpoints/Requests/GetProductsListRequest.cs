@@ -4,5 +4,5 @@ namespace ApiPerformanceComparison.FastEndpoints.Requests;
 
 public class GetProductsListRequest
 {
-    public int? Count { get; set; } = 50;
+    public int Count { get; set; } = 50;
 }

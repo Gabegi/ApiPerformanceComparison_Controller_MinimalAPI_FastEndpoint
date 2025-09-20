@@ -2,6 +2,7 @@
 using FastEndpoints;
 using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.FastEndpoints.Requests;
+using Microsoft.AspNetCore.Authentication;
 
 // entry point
 namespace ApiPerformanceComparison.FastEndpoints
@@ -21,8 +22,7 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, List<Pro
     public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
     {
         var products = Resolve<Dictionary<int, Product>>();
-        var take = req.Count.GetValueOrDefault(50);
-        var result = products.Values.Take(take).ToList();
+        var result = products.Values.Take(req.Count).ToList();
         return SendOkAsync(result, ct);
     }
 }
