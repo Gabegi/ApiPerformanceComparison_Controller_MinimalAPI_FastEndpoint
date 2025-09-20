@@ -17,12 +17,12 @@ namespace ApiPerformanceComparison.Controllers
         }
 
         [HttpGet("list")]
-        public IActionResult GetProducts(int? count = 50)
+        public IActionResult GetProducts(int count)
         {
-            var take = count.GetValueOrDefault(50);
-            var result = _products.Values.Take(take).ToList();
+            var result = _products.Values.Take(count).ToList();
             return Ok(result);
         }
+
 
         [HttpGet("{id:int}")]
         public IActionResult GetProduct(int id)

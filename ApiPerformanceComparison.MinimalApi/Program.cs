@@ -19,8 +19,7 @@ if (!app.Environment.IsEnvironment("Testing"))
 // All async without Task.FromResult wrapping
 app.MapGet("/products/list", async (int? count, Dictionary<int, Product> products) => 
 {
-    var take = count.GetValueOrDefault(50);
-    var result = products.Values.Take(take).ToList();
+    var result = products.Values.Take(count).ToList();
     return Results.Ok(result);
 });
 
