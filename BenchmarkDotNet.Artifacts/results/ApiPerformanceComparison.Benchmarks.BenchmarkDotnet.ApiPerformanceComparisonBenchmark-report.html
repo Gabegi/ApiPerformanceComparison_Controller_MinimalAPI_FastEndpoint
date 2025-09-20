@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ApiPerformanceComparisonBenchmark-20250920-203539</title>
+<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ApiPerformanceComparisonBenchmark-20250920-212551</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -23,26 +23,26 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 </code></pre>
 
 <table>
-<thead><tr><th>Method                          </th><th>Categories</th><th>Mean  </th><th>Error </th><th>StdDev </th><th>Median</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
+<thead><tr><th>Method                          </th><th>Categories</th><th>Mean   </th><th>Error  </th><th>StdDev </th><th>Median</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
 </tr>
-</thead><tbody><tr><td>Controller_ColdStart</td><td>ColdStart</td><td>24,609.52 &mu;s</td><td>2,723.092 &mu;s</td><td>7,813.062 &mu;s</td><td>22,151.87 &mu;s</td><td>?</td><td>?</td><td>533.3333</td><td>266.6667</td><td>66.6667</td><td>3428.01 KB</td><td>?</td>
-</tr><tr><td>MinimalApi_ColdStart</td><td>ColdStart</td><td>28,186.54 &mu;s</td><td>3,213.506 &mu;s</td><td>9,220.153 &mu;s</td><td>25,618.93 &mu;s</td><td>?</td><td>?</td><td>500.0000</td><td>250.0000</td><td>62.5000</td><td>2959.94 KB</td><td>?</td>
-</tr><tr><td>FastEndpoints_ColdStart</td><td>ColdStart</td><td>34,318.21 &mu;s</td><td>3,804.670 &mu;s</td><td>10,916.311 &mu;s</td><td>31,593.70 &mu;s</td><td>?</td><td>?</td><td>714.2857</td><td>142.8571</td><td>-</td><td>5070.2 KB</td><td>?</td>
-</tr><tr><td>Controller_GetMediumDataset</td><td>MediumDataset</td><td>22,216.63 &mu;s</td><td>1,146.857 &mu;s</td><td>3,139.504 &mu;s</td><td>21,349.44 &mu;s</td><td>?</td><td>?</td><td>1000.0000</td><td>875.0000</td><td>500.0000</td><td>10261.48 KB</td><td>?</td>
-</tr><tr><td>MinimalApi_GetMediumDataset</td><td>MediumDataset</td><td>27,601.40 &mu;s</td><td>2,988.083 &mu;s</td><td>8,476.694 &mu;s</td><td>24,012.74 &mu;s</td><td>?</td><td>?</td><td>875.0000</td><td>750.0000</td><td>500.0000</td><td>10256.04 KB</td><td>?</td>
-</tr><tr><td>FastEndpoints_GetMediumDataset</td><td>MediumDataset</td><td>53,565.82 &mu;s</td><td>8,843.052 &mu;s</td><td>25,372.377 &mu;s</td><td>47,821.99 &mu;s</td><td>?</td><td>?</td><td>1000.0000</td><td>777.7778</td><td>555.5556</td><td>10263.11 KB</td><td>?</td>
-</tr><tr><td>Controller_GetSingleProduct</td><td>SingleRequest</td><td>75.45 &mu;s</td><td>7.530 &mu;s</td><td>19.571 &mu;s</td><td>67.66 &mu;s</td><td>1.05</td><td>0.34</td><td>3.4180</td><td>-</td><td>-</td><td>15.09 KB</td><td>1.00</td>
-</tr><tr><td>MinimalApi_GetSingleProduct</td><td>SingleRequest</td><td>32.25 &mu;s</td><td>2.395 &mu;s</td><td>6.557 &mu;s</td><td>31.62 &mu;s</td><td>0.45</td><td>0.13</td><td>2.6855</td><td>-</td><td>-</td><td>11.34 KB</td><td>0.75</td>
-</tr><tr><td>FastEndpoints_GetSingleProduct</td><td>SingleRequest</td><td>55.43 &mu;s</td><td>1.921 &mu;s</td><td>5.482 &mu;s</td><td>56.76 &mu;s</td><td>0.77</td><td>0.16</td><td>2.9297</td><td>-</td><td>-</td><td>12.8 KB</td><td>0.85</td>
-</tr><tr><td>Controller_GetSmallDataset</td><td>SmallDataset</td><td>2,162.98 &mu;s</td><td>42.502 &mu;s</td><td>67.413 &mu;s</td><td>2,145.29 &mu;s</td><td>?</td><td>?</td><td>132.8125</td><td>62.5000</td><td>39.0625</td><td>732.41 KB</td><td>?</td>
-</tr><tr><td>MinimalApi_GetSmallDataset</td><td>SmallDataset</td><td>2,222.94 &mu;s</td><td>94.543 &mu;s</td><td>249.064 &mu;s</td><td>2,164.81 &mu;s</td><td>?</td><td>?</td><td>125.0000</td><td>62.5000</td><td>39.0625</td><td>735.33 KB</td><td>?</td>
-</tr><tr><td>FastEndpoints_GetSmallDataset</td><td>SmallDataset</td><td>3,824.34 &mu;s</td><td>972.042 &mu;s</td><td>2,709.664 &mu;s</td><td>2,488.88 &mu;s</td><td>?</td><td>?</td><td>117.1875</td><td>54.6875</td><td>39.0625</td><td>733.93 KB</td><td>?</td>
-</tr><tr><td>Controller_ConcurrentSingleRequests</td><td>Throughput</td><td>3,760.05 &mu;s</td><td>119.931 &mu;s</td><td>315.947 &mu;s</td><td>3,768.02 &mu;s</td><td>?</td><td>?</td><td>140.6250</td><td>62.5000</td><td>-</td><td>718.78 KB</td><td>?</td>
-</tr><tr><td>MinimalApi_ConcurrentSingleRequests</td><td>Throughput</td><td>2,626.51 &mu;s</td><td>231.327 &mu;s</td><td>617.458 &mu;s</td><td>2,716.90 &mu;s</td><td>?</td><td>?</td><td>109.3750</td><td>46.8750</td><td>-</td><td>534.5 KB</td><td>?</td>
-</tr><tr><td>FastEndpoints_ConcurrentSingleRequests</td><td>Throughput</td><td>2,508.28 &mu;s</td><td>289.922 &mu;s</td><td>788.753 &mu;s</td><td>2,188.62 &mu;s</td><td>?</td><td>?</td><td>93.7500</td><td>78.1250</td><td>-</td><td>606.17 KB</td><td>?</td>
-</tr><tr><td>Controller_ConcurrentSmallDatasets</td><td>Throughput</td><td>19,359.62 &mu;s</td><td>486.474 &mu;s</td><td>1,306.880 &mu;s</td><td>19,063.10 &mu;s</td><td>?</td><td>?</td><td>333.3333</td><td>250.0000</td><td>166.6667</td><td>5363.44 KB</td><td>?</td>
-</tr><tr><td>MinimalApi_ConcurrentSmallDatasets</td><td>Throughput</td><td>20,083.72 &mu;s</td><td>554.802 &mu;s</td><td>1,509.380 &mu;s</td><td>19,907.02 &mu;s</td><td>?</td><td>?</td><td>272.7273</td><td>181.8182</td><td>181.8182</td><td>5318.82 KB</td><td>?</td>
-</tr><tr><td>FastEndpoints_ConcurrentSmallDatasets</td><td>Throughput</td><td>19,673.80 &mu;s</td><td>583.796 &mu;s</td><td>1,607.944 &mu;s</td><td>19,738.31 &mu;s</td><td>?</td><td>?</td><td>272.7273</td><td>181.8182</td><td>181.8182</td><td>5334.2 KB</td><td>?</td>
+</thead><tbody><tr><td>Controller_ColdStart</td><td>ColdStart</td><td>103,697.36 &mu;s</td><td>23,721.882 &mu;s</td><td>69,944.509 &mu;s</td><td>97,431.56 &mu;s</td><td>?</td><td>?</td><td>500.0000</td><td>375.0000</td><td>-</td><td>3393.25 KB</td><td>?</td>
+</tr><tr><td>MinimalApi_ColdStart</td><td>ColdStart</td><td>31,122.55 &mu;s</td><td>4,252.359 &mu;s</td><td>12,200.816 &mu;s</td><td>24,640.53 &mu;s</td><td>?</td><td>?</td><td>500.0000</td><td>312.5000</td><td>62.5000</td><td>2962.9 KB</td><td>?</td>
+</tr><tr><td>FastEndpoints_ColdStart</td><td>ColdStart</td><td>41,532.36 &mu;s</td><td>5,578.241 &mu;s</td><td>16,183.490 &mu;s</td><td>37,202.84 &mu;s</td><td>?</td><td>?</td><td>700.0000</td><td>200.0000</td><td>-</td><td>5031.35 KB</td><td>?</td>
+</tr><tr><td>Controller_GetMediumDataset</td><td>MediumDataset</td><td>35,850.58 &mu;s</td><td>1,429.403 &mu;s</td><td>3,839.999 &mu;s</td><td>35,301.31 &mu;s</td><td>?</td><td>?</td><td>857.1429</td><td>714.2857</td><td>428.5714</td><td>10187.16 KB</td><td>?</td>
+</tr><tr><td>MinimalApi_GetMediumDataset</td><td>MediumDataset</td><td>36,824.64 &mu;s</td><td>1,280.007 &mu;s</td><td>3,460.573 &mu;s</td><td>36,441.36 &mu;s</td><td>?</td><td>?</td><td>1000.0000</td><td>857.1429</td><td>571.4286</td><td>10173.47 KB</td><td>?</td>
+</tr><tr><td>FastEndpoints_GetMediumDataset</td><td>MediumDataset</td><td>36,314.75 &mu;s</td><td>1,334.834 &mu;s</td><td>3,654.086 &mu;s</td><td>35,868.84 &mu;s</td><td>?</td><td>?</td><td>857.1429</td><td>714.2857</td><td>428.5714</td><td>10185.65 KB</td><td>?</td>
+</tr><tr><td>Controller_GetSingleProduct</td><td>SingleRequest</td><td>380.77 &mu;s</td><td>108.353 &mu;s</td><td>309.137 &mu;s</td><td>246.48 &mu;s</td><td>2.01</td><td>2.54</td><td>-</td><td>-</td><td>-</td><td>15.09 KB</td><td>1.00</td>
+</tr><tr><td>MinimalApi_GetSingleProduct</td><td>SingleRequest</td><td>53.52 &mu;s</td><td>2.967 &mu;s</td><td>8.171 &mu;s</td><td>52.97 &mu;s</td><td>0.28</td><td>0.22</td><td>2.6855</td><td>-</td><td>-</td><td>11.34 KB</td><td>0.75</td>
+</tr><tr><td>FastEndpoints_GetSingleProduct</td><td>SingleRequest</td><td>157.08 &mu;s</td><td>29.198 &mu;s</td><td>86.091 &mu;s</td><td>127.35 &mu;s</td><td>0.83</td><td>0.84</td><td>1.9531</td><td>-</td><td>-</td><td>12.79 KB</td><td>0.85</td>
+</tr><tr><td>Controller_GetSmallDataset</td><td>SmallDataset</td><td>2,462.48 &mu;s</td><td>70.499 &mu;s</td><td>196.524 &mu;s</td><td>2,455.04 &mu;s</td><td>?</td><td>?</td><td>125.0000</td><td>62.5000</td><td>39.0625</td><td>731.77 KB</td><td>?</td>
+</tr><tr><td>MinimalApi_GetSmallDataset</td><td>SmallDataset</td><td>2,599.97 &mu;s</td><td>68.609 &mu;s</td><td>186.656 &mu;s</td><td>2,595.23 &mu;s</td><td>?</td><td>?</td><td>125.0000</td><td>62.5000</td><td>39.0625</td><td>727.37 KB</td><td>?</td>
+</tr><tr><td>FastEndpoints_GetSmallDataset</td><td>SmallDataset</td><td>2,723.07 &mu;s</td><td>58.203 &mu;s</td><td>163.206 &mu;s</td><td>2,709.59 &mu;s</td><td>?</td><td>?</td><td>125.0000</td><td>62.5000</td><td>39.0625</td><td>722.35 KB</td><td>?</td>
+</tr><tr><td>Controller_ConcurrentSingleRequests</td><td>Throughput</td><td>7,433.69 &mu;s</td><td>1,311.576 &mu;s</td><td>3,867.212 &mu;s</td><td>5,852.04 &mu;s</td><td>?</td><td>?</td><td>125.0000</td><td>31.2500</td><td>-</td><td>719.01 KB</td><td>?</td>
+</tr><tr><td>MinimalApi_ConcurrentSingleRequests</td><td>Throughput</td><td>4,422.60 &mu;s</td><td>349.959 &mu;s</td><td>963.890 &mu;s</td><td>3,941.69 &mu;s</td><td>?</td><td>?</td><td>109.3750</td><td>46.8750</td><td>-</td><td>534.58 KB</td><td>?</td>
+</tr><tr><td>FastEndpoints_ConcurrentSingleRequests</td><td>Throughput</td><td>3,855.21 &mu;s</td><td>116.317 &mu;s</td><td>306.425 &mu;s</td><td>3,823.24 &mu;s</td><td>?</td><td>?</td><td>109.3750</td><td>62.5000</td><td>-</td><td>606.17 KB</td><td>?</td>
+</tr><tr><td>Controller_ConcurrentSmallDatasets</td><td>Throughput</td><td>22,551.70 &mu;s</td><td>556.571 &mu;s</td><td>1,436.687 &mu;s</td><td>22,641.08 &mu;s</td><td>?</td><td>?</td><td>375.0000</td><td>250.0000</td><td>250.0000</td><td>5249.26 KB</td><td>?</td>
+</tr><tr><td>MinimalApi_ConcurrentSmallDatasets</td><td>Throughput</td><td>22,386.92 &mu;s</td><td>762.831 &mu;s</td><td>2,036.149 &mu;s</td><td>22,135.84 &mu;s</td><td>?</td><td>?</td><td>375.0000</td><td>250.0000</td><td>250.0000</td><td>5216.76 KB</td><td>?</td>
+</tr><tr><td>FastEndpoints_ConcurrentSmallDatasets</td><td>Throughput</td><td>21,507.37 &mu;s</td><td>629.707 &mu;s</td><td>1,658.901 &mu;s</td><td>21,429.51 &mu;s</td><td>?</td><td>?</td><td>375.0000</td><td>250.0000</td><td>250.0000</td><td>5236.19 KB</td><td>?</td>
 </tr></tbody></table>
 </body>
 </html>

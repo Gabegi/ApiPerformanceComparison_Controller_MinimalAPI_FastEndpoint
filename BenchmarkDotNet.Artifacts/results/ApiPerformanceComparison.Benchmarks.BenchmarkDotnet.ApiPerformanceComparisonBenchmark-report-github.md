@@ -9,27 +9,27 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 Job=.NET 9.0  Runtime=.NET 9.0  
 
 ```
-| Method                                 | Categories    | Mean         | Error        | StdDev        | Median       | Ratio | RatioSD | Gen0      | Gen1     | Gen2     | Allocated   | Alloc Ratio |
-|--------------------------------------- |-------------- |-------------:|-------------:|--------------:|-------------:|------:|--------:|----------:|---------:|---------:|------------:|------------:|
-| Controller_ColdStart                   | ColdStart     | 24,609.52 μs | 2,723.092 μs |  7,813.062 μs | 22,151.87 μs |     ? |       ? |  533.3333 | 266.6667 |  66.6667 |  3428.01 KB |           ? |
-| MinimalApi_ColdStart                   | ColdStart     | 28,186.54 μs | 3,213.506 μs |  9,220.153 μs | 25,618.93 μs |     ? |       ? |  500.0000 | 250.0000 |  62.5000 |  2959.94 KB |           ? |
-| FastEndpoints_ColdStart                | ColdStart     | 34,318.21 μs | 3,804.670 μs | 10,916.311 μs | 31,593.70 μs |     ? |       ? |  714.2857 | 142.8571 |        - |   5070.2 KB |           ? |
-|                                        |               |              |              |               |              |       |         |           |          |          |             |             |
-| Controller_GetMediumDataset            | MediumDataset | 22,216.63 μs | 1,146.857 μs |  3,139.504 μs | 21,349.44 μs |     ? |       ? | 1000.0000 | 875.0000 | 500.0000 | 10261.48 KB |           ? |
-| MinimalApi_GetMediumDataset            | MediumDataset | 27,601.40 μs | 2,988.083 μs |  8,476.694 μs | 24,012.74 μs |     ? |       ? |  875.0000 | 750.0000 | 500.0000 | 10256.04 KB |           ? |
-| FastEndpoints_GetMediumDataset         | MediumDataset | 53,565.82 μs | 8,843.052 μs | 25,372.377 μs | 47,821.99 μs |     ? |       ? | 1000.0000 | 777.7778 | 555.5556 | 10263.11 KB |           ? |
-|                                        |               |              |              |               |              |       |         |           |          |          |             |             |
-| Controller_GetSingleProduct            | SingleRequest |     75.45 μs |     7.530 μs |     19.571 μs |     67.66 μs |  1.05 |    0.34 |    3.4180 |        - |        - |    15.09 KB |        1.00 |
-| MinimalApi_GetSingleProduct            | SingleRequest |     32.25 μs |     2.395 μs |      6.557 μs |     31.62 μs |  0.45 |    0.13 |    2.6855 |        - |        - |    11.34 KB |        0.75 |
-| FastEndpoints_GetSingleProduct         | SingleRequest |     55.43 μs |     1.921 μs |      5.482 μs |     56.76 μs |  0.77 |    0.16 |    2.9297 |        - |        - |     12.8 KB |        0.85 |
-|                                        |               |              |              |               |              |       |         |           |          |          |             |             |
-| Controller_GetSmallDataset             | SmallDataset  |  2,162.98 μs |    42.502 μs |     67.413 μs |  2,145.29 μs |     ? |       ? |  132.8125 |  62.5000 |  39.0625 |   732.41 KB |           ? |
-| MinimalApi_GetSmallDataset             | SmallDataset  |  2,222.94 μs |    94.543 μs |    249.064 μs |  2,164.81 μs |     ? |       ? |  125.0000 |  62.5000 |  39.0625 |   735.33 KB |           ? |
-| FastEndpoints_GetSmallDataset          | SmallDataset  |  3,824.34 μs |   972.042 μs |  2,709.664 μs |  2,488.88 μs |     ? |       ? |  117.1875 |  54.6875 |  39.0625 |   733.93 KB |           ? |
-|                                        |               |              |              |               |              |       |         |           |          |          |             |             |
-| Controller_ConcurrentSingleRequests    | Throughput    |  3,760.05 μs |   119.931 μs |    315.947 μs |  3,768.02 μs |     ? |       ? |  140.6250 |  62.5000 |        - |   718.78 KB |           ? |
-| MinimalApi_ConcurrentSingleRequests    | Throughput    |  2,626.51 μs |   231.327 μs |    617.458 μs |  2,716.90 μs |     ? |       ? |  109.3750 |  46.8750 |        - |    534.5 KB |           ? |
-| FastEndpoints_ConcurrentSingleRequests | Throughput    |  2,508.28 μs |   289.922 μs |    788.753 μs |  2,188.62 μs |     ? |       ? |   93.7500 |  78.1250 |        - |   606.17 KB |           ? |
-| Controller_ConcurrentSmallDatasets     | Throughput    | 19,359.62 μs |   486.474 μs |  1,306.880 μs | 19,063.10 μs |     ? |       ? |  333.3333 | 250.0000 | 166.6667 |  5363.44 KB |           ? |
-| MinimalApi_ConcurrentSmallDatasets     | Throughput    | 20,083.72 μs |   554.802 μs |  1,509.380 μs | 19,907.02 μs |     ? |       ? |  272.7273 | 181.8182 | 181.8182 |  5318.82 KB |           ? |
-| FastEndpoints_ConcurrentSmallDatasets  | Throughput    | 19,673.80 μs |   583.796 μs |  1,607.944 μs | 19,738.31 μs |     ? |       ? |  272.7273 | 181.8182 | 181.8182 |   5334.2 KB |           ? |
+| Method                                 | Categories    | Mean          | Error         | StdDev        | Median       | Ratio | RatioSD | Gen0      | Gen1     | Gen2     | Allocated   | Alloc Ratio |
+|--------------------------------------- |-------------- |--------------:|--------------:|--------------:|-------------:|------:|--------:|----------:|---------:|---------:|------------:|------------:|
+| Controller_ColdStart                   | ColdStart     | 103,697.36 μs | 23,721.882 μs | 69,944.509 μs | 97,431.56 μs |     ? |       ? |  500.0000 | 375.0000 |        - |  3393.25 KB |           ? |
+| MinimalApi_ColdStart                   | ColdStart     |  31,122.55 μs |  4,252.359 μs | 12,200.816 μs | 24,640.53 μs |     ? |       ? |  500.0000 | 312.5000 |  62.5000 |   2962.9 KB |           ? |
+| FastEndpoints_ColdStart                | ColdStart     |  41,532.36 μs |  5,578.241 μs | 16,183.490 μs | 37,202.84 μs |     ? |       ? |  700.0000 | 200.0000 |        - |  5031.35 KB |           ? |
+|                                        |               |               |               |               |              |       |         |           |          |          |             |             |
+| Controller_GetMediumDataset            | MediumDataset |  35,850.58 μs |  1,429.403 μs |  3,839.999 μs | 35,301.31 μs |     ? |       ? |  857.1429 | 714.2857 | 428.5714 | 10187.16 KB |           ? |
+| MinimalApi_GetMediumDataset            | MediumDataset |  36,824.64 μs |  1,280.007 μs |  3,460.573 μs | 36,441.36 μs |     ? |       ? | 1000.0000 | 857.1429 | 571.4286 | 10173.47 KB |           ? |
+| FastEndpoints_GetMediumDataset         | MediumDataset |  36,314.75 μs |  1,334.834 μs |  3,654.086 μs | 35,868.84 μs |     ? |       ? |  857.1429 | 714.2857 | 428.5714 | 10185.65 KB |           ? |
+|                                        |               |               |               |               |              |       |         |           |          |          |             |             |
+| Controller_GetSingleProduct            | SingleRequest |     380.77 μs |    108.353 μs |    309.137 μs |    246.48 μs |  2.01 |    2.54 |         - |        - |        - |    15.09 KB |        1.00 |
+| MinimalApi_GetSingleProduct            | SingleRequest |      53.52 μs |      2.967 μs |      8.171 μs |     52.97 μs |  0.28 |    0.22 |    2.6855 |        - |        - |    11.34 KB |        0.75 |
+| FastEndpoints_GetSingleProduct         | SingleRequest |     157.08 μs |     29.198 μs |     86.091 μs |    127.35 μs |  0.83 |    0.84 |    1.9531 |        - |        - |    12.79 KB |        0.85 |
+|                                        |               |               |               |               |              |       |         |           |          |          |             |             |
+| Controller_GetSmallDataset             | SmallDataset  |   2,462.48 μs |     70.499 μs |    196.524 μs |  2,455.04 μs |     ? |       ? |  125.0000 |  62.5000 |  39.0625 |   731.77 KB |           ? |
+| MinimalApi_GetSmallDataset             | SmallDataset  |   2,599.97 μs |     68.609 μs |    186.656 μs |  2,595.23 μs |     ? |       ? |  125.0000 |  62.5000 |  39.0625 |   727.37 KB |           ? |
+| FastEndpoints_GetSmallDataset          | SmallDataset  |   2,723.07 μs |     58.203 μs |    163.206 μs |  2,709.59 μs |     ? |       ? |  125.0000 |  62.5000 |  39.0625 |   722.35 KB |           ? |
+|                                        |               |               |               |               |              |       |         |           |          |          |             |             |
+| Controller_ConcurrentSingleRequests    | Throughput    |   7,433.69 μs |  1,311.576 μs |  3,867.212 μs |  5,852.04 μs |     ? |       ? |  125.0000 |  31.2500 |        - |   719.01 KB |           ? |
+| MinimalApi_ConcurrentSingleRequests    | Throughput    |   4,422.60 μs |    349.959 μs |    963.890 μs |  3,941.69 μs |     ? |       ? |  109.3750 |  46.8750 |        - |   534.58 KB |           ? |
+| FastEndpoints_ConcurrentSingleRequests | Throughput    |   3,855.21 μs |    116.317 μs |    306.425 μs |  3,823.24 μs |     ? |       ? |  109.3750 |  62.5000 |        - |   606.17 KB |           ? |
+| Controller_ConcurrentSmallDatasets     | Throughput    |  22,551.70 μs |    556.571 μs |  1,436.687 μs | 22,641.08 μs |     ? |       ? |  375.0000 | 250.0000 | 250.0000 |  5249.26 KB |           ? |
+| MinimalApi_ConcurrentSmallDatasets     | Throughput    |  22,386.92 μs |    762.831 μs |  2,036.149 μs | 22,135.84 μs |     ? |       ? |  375.0000 | 250.0000 | 250.0000 |  5216.76 KB |           ? |
+| FastEndpoints_ConcurrentSmallDatasets  | Throughput    |  21,507.37 μs |    629.707 μs |  1,658.901 μs | 21,429.51 μs |     ? |       ? |  375.0000 | 250.0000 | 250.0000 |  5236.19 KB |           ? |
