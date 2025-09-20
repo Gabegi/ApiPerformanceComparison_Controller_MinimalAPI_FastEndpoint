@@ -1,4 +1,5 @@
 using ApiPerformanceComparison.Shared;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,12 +47,13 @@ app.MapPut("/products/{id:int}", async (int id, Product updatedProduct, Dictiona
     return Results.Ok(existingProduct);
 });
 
-app.MapDelete("/products/{id:int}", async (int id, Dictionary<int, Product> products) =>
+app.MapDelete("/products/{id:int}", (int id, [FromServices] Dictionary<int, Product> products) =>
 {
     if (products.Remove(id))
         return Results.NoContent();
     return Results.NotFound();
 });
+
 
 app.Run();
 
