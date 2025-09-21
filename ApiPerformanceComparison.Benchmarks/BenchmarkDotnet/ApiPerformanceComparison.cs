@@ -1,9 +1,3 @@
-using ApiPerformanceComparison.Shared;
-using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
-
 namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
 
 [MemoryDiagnoser]
@@ -30,6 +24,8 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
         {
             var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100)
                               .ToDictionary(p => p.Id);
+            services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+
 
             // Setup Controller API
         _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
@@ -94,6 +90,8 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
                     builder.ConfigureServices(services =>
                     {
                         services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
+                                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+
                     }));
             using var client = factory.CreateClient();
             
@@ -111,6 +109,8 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
                     builder.ConfigureServices(services =>
                     {
                         services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
+                                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+
                     }));
             using var client = factory.CreateClient();
             
@@ -128,6 +128,8 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
                     builder.ConfigureServices(services =>
                     {
                         services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
+                                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+
                     }));
             using var client = factory.CreateClient();
             

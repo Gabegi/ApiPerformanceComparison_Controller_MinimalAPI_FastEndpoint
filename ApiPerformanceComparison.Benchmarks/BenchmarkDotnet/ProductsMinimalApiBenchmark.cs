@@ -1,10 +1,3 @@
-using ApiPerformanceComparison.Shared;
-using ApiPerformanceComparison.Shared.Requests;
-using BenchmarkDotNet.Attributes;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
-
 namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 {
     [MemoryDiagnoser]
@@ -160,6 +153,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                     builder.ConfigureServices(services =>
                     {
                         var testProducts = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
+                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
                         services.AddSingleton(testProducts);
                     }));
             using var client = factory.CreateClient();
