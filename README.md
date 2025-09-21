@@ -388,3 +388,9 @@ PUT /products/{id}
 DELETE /products/{id}
 
 …and you have 10k+ products, you definitely want Dictionary<int, Product>. Otherwise every single request by ID will loop through thousands of items — not great for performance.
+
+# Performance issues
+
+Here’s the catch:
+
+System.Text.Json doesn’t stream IEnumerable<T> by default — it buffers the entire enumeration into a List<T> before serializing.

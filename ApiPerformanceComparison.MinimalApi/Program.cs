@@ -16,42 +16,31 @@ if (!app.Environment.IsEnvironment("Testing"))
 {
     app.UseHttpsRedirection();
 }
+app.MapGet("/products/list", (int count, [FromServices] Dictionary<int, Product> products) =>
+    products.Values.Take(count).ToAsyncEnumerable());
 
-app.MapGet("/products/list", (int count, Dictionary<int, Product> products) => 
-    Results.Ok(products.Values.Take(count)));
+app.MapGet("/products/{id:int}", (int id, [FromServices] Dictionary<int, Product> products) => 
+    products.TryGetValue(id, out var p) ? Results.Ok(p) : Results.NotFound());
 
-app.MapGet("/products/{id:int}", async (int id, Dictionary<int, Product> products) => 
+app.MapPost("/products", (Product newProduct, [FromServices] Dictionary<int, Product> products, [FromServices] AtomicCounter counter) =>
 {
-    if (products.TryGetValue(id, out var product))
-        return Results.Ok(product);
-    return Results.NotFound();
-});
-
-app.MapPost("/products", async (Product newProduct, Dictionary<int, Product> products, AtomicCounter counter) =>
-{
-    if (newProduct == null)
-        return Results.BadRequest();
-
     newProduct.Id = counter.GetNext();
     products[newProduct.Id] = newProduct;
     return Results.Created($"/products/{newProduct.Id}", newProduct);
 });
 
-app.MapPut("/products/{id:int}", async (int id, Product updatedProduct, Dictionary<int, Product> products) =>
+app.MapPut("/products/{id:int}", (int id, Product updatedProduct, [FromServices] Dictionary<int, Product> products) =>
 {
-    if (!products.TryGetValue(id, out var existingProduct))
+    if (!products.TryGetValue(id, out var existing))
         return Results.NotFound();
-
-    existingProduct.Name = updatedProduct.Name;
-    existingProduct.Price = updatedProduct.Price;
-    return Results.Ok(existingProduct);
+    existing.Name = updatedProduct.Name;
+    existing.Price = updatedProduct.Price;
+    return Results.Ok(existing);
 });
 
 app.MapDelete("/products/{id:int}", (int id, [FromServices] Dictionary<int, Product> products) =>
 {
-    if (products.Remove(id))
-        return Results.NoContent();
-    return Results.NotFound();
+    return products.Remove(id) ? Results.NoContent() : Results.NotFound();
 });
 
 
