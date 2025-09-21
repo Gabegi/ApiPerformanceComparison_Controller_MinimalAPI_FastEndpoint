@@ -1,3 +1,11 @@
+using ApiPerformanceComparison.Shared;
+using ApiPerformanceComparison.Shared.Requests;
+using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Collections.Concurrent;
+using System.Net.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 {
     [MemoryDiagnoser]
@@ -16,6 +24,9 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         [GlobalSetup]
         public void Setup()
         {
+            var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
+            var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
+
             _factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
@@ -149,6 +160,10 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         [BenchmarkCategory("ColdStart")]
         public async Task<Product?> ColdStartSingleRequest()
         {
+
+            var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
+            var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
+
             // Create fresh factory to measure true cold start
             using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>

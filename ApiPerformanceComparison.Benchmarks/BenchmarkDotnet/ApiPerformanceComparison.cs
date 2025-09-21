@@ -1,6 +1,13 @@
+using ApiPerformanceComparison.Shared;
+using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Collections.Concurrent;
+using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
+
 namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
 
-[MemoryDiagnoser]
+    [MemoryDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
     [GroupBenchmarksBy(BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule.ByCategory)]
     [CategoriesColumn]
@@ -19,46 +26,51 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
         private const int CONCURRENT_REQUESTS = 50;
         private readonly Random _random = new();
 
-        [GlobalSetup]
-        public void Setup()
-        {
-            var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100)
-                              .ToDictionary(p => p.Id);
-            services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+    [GlobalSetup]
+    public void Setup()
+    {
+        // Seed products for the benchmark
+        var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100)
+                                      .ToDictionary(p => p.Id);
 
+        var concurrentProducts = new ConcurrentDictionary<int, Product>(testProducts);
 
-            // Setup Controller API
+        // Setup Controller API
         _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        services.AddSingleton(testProducts);
-                    }));
-            _controllerClient = _controllerFactory.CreateClient();
+            .WithWebHostBuilder(builder =>
+                builder.ConfigureServices(services =>
+                {
+                    // Register dictionary & concurrent dictionary
+                    services.AddSingleton(testProducts);
+                    services.AddSingleton(concurrentProducts);
+                }));
+        _controllerClient = _controllerFactory.CreateClient();
 
-            // Setup Minimal API
-            _minimalApiFactory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        services.AddSingleton(testProducts);
-                    }));
-            _minimalApiClient = _minimalApiFactory.CreateClient();
+        // Setup Minimal API
+        _minimalApiFactory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+            .WithWebHostBuilder(builder =>
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton(testProducts);
+                    services.AddSingleton(concurrentProducts);
+                }));
+        _minimalApiClient = _minimalApiFactory.CreateClient();
 
-            // Setup FastEndpoints API
-            _fastEndpointsFactory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        services.AddSingleton(testProducts);
-                    }));
-            _fastEndpointsClient = _fastEndpointsFactory.CreateClient();
+        // Setup FastEndpoints API
+        _fastEndpointsFactory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
+            .WithWebHostBuilder(builder =>
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton(testProducts);
+                    services.AddSingleton(concurrentProducts);
+                }));
+        _fastEndpointsClient = _fastEndpointsFactory.CreateClient();
 
-            // Warmup requests to eliminate cold start effects
-            WarmupAsync().GetAwaiter().GetResult();
-        }
+        // Warmup requests to eliminate cold start effects
+        WarmupAsync().GetAwaiter().GetResult();
+    }
 
-        private async Task WarmupAsync()
+    private async Task WarmupAsync()
         {
             var warmupTasks = new[]
             {
@@ -84,8 +96,10 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
         [BenchmarkCategory("ColdStart")]
         public async Task<Product?> Controller_ColdStart()
         {
-            // Create fresh factory to measure true cold start
-            using var factory = new WebApplicationFactory<Controllers.ProductsController>()
+        var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
+        var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
+        // Create fresh factory to measure true cold start
+        using var factory = new WebApplicationFactory<Controllers.ProductsController>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
@@ -104,7 +118,10 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
         [BenchmarkCategory("ColdStart")]
         public async Task<Product?> MinimalApi_ColdStart()
         {
-            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+        var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
+        var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
+        
+        using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
@@ -123,7 +140,10 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
         [BenchmarkCategory("ColdStart")]
         public async Task<Product?> FastEndpoints_ColdStart()
         {
-            using var factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
+        var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
+        var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
+        
+        using var factory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
