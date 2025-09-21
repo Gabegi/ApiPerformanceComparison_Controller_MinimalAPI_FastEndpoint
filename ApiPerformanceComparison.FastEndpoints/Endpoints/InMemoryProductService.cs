@@ -2,18 +2,7 @@
 using FastEndpoints;
 using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.FastEndpoints.Requests;
-using Microsoft.AspNetCore.Authentication;
-using ApiPerformanceComparison.Shared;
 using System.Collections.Concurrent;
-using FastEndpoints;
-using ApiPerformanceComparison.Shared;
-
-
-// entry point
-namespace ApiPerformanceComparison.FastEndpoints
-{
-    public sealed class FastEndpointsEntryPoint { }
-}
 
 // GetProductsList Endpoint
 public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumerable<Product>>
