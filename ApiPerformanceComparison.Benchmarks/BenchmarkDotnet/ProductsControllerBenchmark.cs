@@ -154,6 +154,8 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                     builder.ConfigureServices(services =>
                     {
                         services.AddSingleton(QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id));
+                                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+
                     }));
             using var client = factory.CreateClient();
             

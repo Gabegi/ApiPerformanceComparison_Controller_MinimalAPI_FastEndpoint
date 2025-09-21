@@ -21,6 +21,8 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                     builder.ConfigureServices(services =>
                     {
                         var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100).ToDictionary(p => p.Id);
+                                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
+
                         services.AddSingleton(testProducts);
                     }));
 

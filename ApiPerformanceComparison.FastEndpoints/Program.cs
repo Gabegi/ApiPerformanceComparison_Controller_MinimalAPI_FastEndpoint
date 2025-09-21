@@ -1,3 +1,9 @@
+using ApiPerformanceComparison.Shared;
+using System.Collections.Concurrent;
+using FastEndpoints;
+using ApiPerformanceComparison.Shared;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Use Dictionary for O(1) lookups - same data structure as others
