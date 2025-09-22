@@ -1,67 +1,55 @@
-#nullable enable
-
-using ApiPerformanceComparison.Shared;
-using System.Collections.Concurrent;
+﻿using ApiPerformanceComparison.Shared;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Concurrent;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register services (datasets will be injected by benchmarks)
-builder.Services.AddSingleton<ConcurrentDictionary<int, Product>>();
-builder.Services.AddSingleton<AtomicCounter>();
-
-    
+// Register product store once
+builder.Services.AddSingleton(sp =>
+{
+    // seeded at startup (can be overridden in tests via ConfigureServices)
+    var seeded = QuickSeeder.SeedProducts(10_000).ToDictionary(p => p.Id);
+    return new ConcurrentDictionary<int, Product>(seeded);
+});
 
 var app = builder.Build();
 
-// Optional HTTPS redirection in non-testing environments
-if (!app.Environment.IsEnvironment("Testing"))
-{
-    app.UseHttpsRedirection();
-}
-
-// List products endpoint
-app.MapGet("/products/list", (int count, [FromServices] ConcurrentDictionary<int, Product> products) =>
-    Results.Ok(products.Values.Take(count).ToList()));
-
 // Get single product
-app.MapGet("/products/{id:int}", (int id, [FromServices] ConcurrentDictionary<int, Product> products) =>
+app.MapGet("/products/{id:int}", ([FromRoute] int id, [FromServices] ConcurrentDictionary<int, Product> products) =>
     products.TryGetValue(id, out var product)
         ? Results.Ok(product)
-        : Results.NotFound()
-);
+        : Results.NotFound());
 
+// List products (NO ToList → avoid allocations)
+app.MapGet("/products/list", (int count, [FromServices] ConcurrentDictionary<int, Product> products) =>
+    Results.Ok(products.Values.Take(count)));
 
-// Create new product
-app.MapPost("/products", (Product newProduct, [FromServices] ConcurrentDictionary<int, Product> products, [FromServices] AtomicCounter counter) =>
+// Create
+app.MapPost("/products", (Product product, [FromServices] ConcurrentDictionary<int, Product> products) =>
 {
-    if (newProduct is null)
-        return Results.BadRequest();
-
-    newProduct.Id = counter.GetNext();
-    products[newProduct.Id] = newProduct;
-    return Results.Created($"/products/{newProduct.Id}", newProduct);
+    var id = products.Keys.DefaultIfEmpty(0).Max() + 1;
+    product.Id = id;
+    products.TryAdd(id, product);
+    return Results.Created($"/products/{id}", product);
 });
 
-// Update existing product
-app.MapPut("/products/{id:int}", (int id, Product updatedProduct, [FromServices] ConcurrentDictionary<int, Product> products) =>
+// Update
+app.MapPut("/products/{id:int}", (int id, Product updated, [FromServices] ConcurrentDictionary<int, Product> products) =>
 {
-    if (!products.TryGetValue(id, out var existing))
-        return Results.NotFound();
-
-    existing.Name = updatedProduct.Name;
-    existing.Price = updatedProduct.Price;
-    return Results.Ok(existing);
+    if (!products.ContainsKey(id)) return Results.NotFound();
+    updated.Id = id;
+    products[id] = updated;
+    return Results.Ok(updated);
 });
 
-// Delete product
+// Delete
 app.MapDelete("/products/{id:int}", (int id, [FromServices] ConcurrentDictionary<int, Product> products) =>
-    products.TryRemove(id, out _) ? Results.NoContent() : Results.NotFound()
-);
+{
+    return products.TryRemove(id, out _)
+        ? Results.NoContent()
+        : Results.NotFound();
+});
 
 app.Run();
 
-namespace ApiPerformanceComparison.MinimalApi
-{
-    public sealed class MinimalEntryPoint { }
-}
+public partial class MinimalEntryPoint { }

@@ -29,46 +29,41 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet;
     [GlobalSetup]
     public void Setup()
     {
-        // Seed products for the benchmark
+        // Seed test data
         var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100)
                                       .ToDictionary(p => p.Id);
-
         var concurrentProducts = new ConcurrentDictionary<int, Product>(testProducts);
 
-        // Setup Controller API
+        // Controller
         _controllerFactory = new WebApplicationFactory<Controllers.ProductsController>()
             .WithWebHostBuilder(builder =>
                 builder.ConfigureServices(services =>
                 {
-                    // Register dictionary & concurrent dictionary
-                    services.AddSingleton(testProducts);
                     services.AddSingleton(concurrentProducts);
                 }));
         _controllerClient = _controllerFactory.CreateClient();
 
-        // Setup Minimal API
+        // Minimal API
         _minimalApiFactory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
             .WithWebHostBuilder(builder =>
                 builder.ConfigureServices(services =>
                 {
-                    services.AddSingleton(testProducts);
                     services.AddSingleton(concurrentProducts);
                 }));
         _minimalApiClient = _minimalApiFactory.CreateClient();
 
-        // Setup FastEndpoints API
+        // FastEndpoints
         _fastEndpointsFactory = new WebApplicationFactory<FastEndpoints.FastEndpointsEntryPoint>()
             .WithWebHostBuilder(builder =>
                 builder.ConfigureServices(services =>
                 {
-                    services.AddSingleton(testProducts);
                     services.AddSingleton(concurrentProducts);
                 }));
         _fastEndpointsClient = _fastEndpointsFactory.CreateClient();
 
-        // Warmup requests to eliminate cold start effects
         WarmupAsync().GetAwaiter().GetResult();
     }
+
 
     private async Task WarmupAsync()
         {

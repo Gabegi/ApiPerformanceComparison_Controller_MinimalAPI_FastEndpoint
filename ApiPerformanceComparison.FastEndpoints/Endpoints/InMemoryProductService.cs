@@ -1,4 +1,4 @@
-
+﻿
 using FastEndpoints;
 using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.FastEndpoints.Requests;
@@ -15,16 +15,14 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumera
 
     public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
     {
-        var products = Resolve<ConcurrentDictionary<int, Product>>();
+        var products = Resolve<Dictionary<int, Product>>();  // ✅ use Dictionary
 
         var result = products.Values
                              .Take(req.Count)
-                             .ToList(); // <-- important!
+                             .ToList();
 
         return SendOkAsync(result, ct);
     }
-
-
 }
 
 // GetProduct Endpoint
@@ -37,8 +35,8 @@ public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
     }
 
     public override Task HandleAsync(GetProductRequest req, CancellationToken ct)
-    {var products = Resolve<ConcurrentDictionary<int, Product>>();
-
+    {
+        var products = Resolve<Dictionary<int, Product>>(); // ✅ use Dictionary
 
         if (products.TryGetValue(req.Id, out var product))
             return SendOkAsync(product, ct);
@@ -59,11 +57,9 @@ public class CreateProductEndpoint : Endpoint<Product, Product>
     public override Task HandleAsync(Product req, CancellationToken ct)
     {
         if (req == null)
-        
             return SendErrorsAsync(cancellation: ct);
 
-        var products = Resolve<ConcurrentDictionary<int, Product>>();
-
+        var products = Resolve<ConcurrentDictionary<int, Product>>(); // ✅ use ConcurrentDictionary
         var counter = Resolve<AtomicCounter>();
 
         req.Id = counter.GetNext();
@@ -84,8 +80,7 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
 
     public override Task HandleAsync(UpdateProductRequest req, CancellationToken ct)
     {
-        var products = Resolve<ConcurrentDictionary<int, Product>>();
-
+        var products = Resolve<ConcurrentDictionary<int, Product>>(); // ✅ use ConcurrentDictionary
 
         if (!products.TryGetValue(req.Id, out var existingProduct))
             return SendNotFoundAsync(ct);
@@ -108,11 +103,10 @@ public class DeleteProductEndpoint : Endpoint<DeleteProductRequest>
 
     public override Task HandleAsync(DeleteProductRequest req, CancellationToken ct)
     {
-        var products = Resolve<ConcurrentDictionary<int, Product>>();
-
+        var products = Resolve<ConcurrentDictionary<int, Product>>(); // ✅ use ConcurrentDictionary
 
         if (products.TryRemove(req.Id, out _))
-    return SendNoContentAsync(ct);
+            return SendNoContentAsync(ct);
 
         return SendNotFoundAsync(ct);
     }
