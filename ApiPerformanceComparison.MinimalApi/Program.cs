@@ -52,4 +52,8 @@ app.MapDelete("/products/{id:int}", (int id, [FromServices] ConcurrentDictionary
 
 app.Run();
 
-public partial class MinimalEntryPoint { }
+namespace ApiPerformanceComparison.MinimalApi
+{
+    public partial class MinimalEntryPoint { }
+}
+

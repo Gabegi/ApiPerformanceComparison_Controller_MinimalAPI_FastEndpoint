@@ -1,6 +1,5 @@
 using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.Shared.Requests;
-using ApiPerformanceComparison.MinimalApi;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Collections.Concurrent;
@@ -109,25 +108,28 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             response.EnsureSuccessStatusCode();
             response.Dispose();
         }
-
         [Benchmark]
         [BenchmarkCategory("DeleteOperation")]
         public async Task DeleteProduct()
         {
-            // First create a product
-            var createResponse = await _client!.PostAsJsonAsync("/products", new Product
+            // 1. Create a unique product first
+            var req = new CreateProductCall
             {
-                Name = "ToDelete",
-                Price = 1.23m
-            });
+                Name = $"ToDelete {_random.Next()}",
+                Price = (decimal)_random.NextDouble() * 100
+            };
+
+            var createResponse = await _client!.PostAsJsonAsync("/products", req);
             createResponse.EnsureSuccessStatusCode();
             var created = await createResponse.Content.ReadFromJsonAsync<Product>();
+            createResponse.Dispose();
 
-            // Then delete it
+            // 2. Delete the newly created product
             var deleteResponse = await _client.DeleteAsync($"/products/{created!.Id}");
             deleteResponse.EnsureSuccessStatusCode();
             deleteResponse.Dispose();
         }
+
 
 
         [Benchmark]
@@ -173,7 +175,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
             var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
 
-            using var factory = new WebApplicationFactory<>()
+            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
