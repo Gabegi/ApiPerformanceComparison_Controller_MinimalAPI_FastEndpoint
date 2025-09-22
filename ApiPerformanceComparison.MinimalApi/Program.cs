@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ConcurrentDictionary<int, Product>>();
 builder.Services.AddSingleton<AtomicCounter>();
 
+    
+
 var app = builder.Build();
 
 // Optional HTTPS redirection in non-testing environments
@@ -20,8 +22,7 @@ if (!app.Environment.IsEnvironment("Testing"))
 
 // List products endpoint
 app.MapGet("/products/list", (int count, [FromServices] ConcurrentDictionary<int, Product> products) =>
-    Results.Ok(products.Values.Take(count).ToList())
-);
+    Results.Ok(products.Values.Take(count).ToList()));
 
 // Get single product
 app.MapGet("/products/{id:int}", (int id, [FromServices] ConcurrentDictionary<int, Product> products) =>

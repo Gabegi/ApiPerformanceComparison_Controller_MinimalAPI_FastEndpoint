@@ -485,3 +485,24 @@ You’re streaming results (e.g., with IAsyncEnumerable<T> and yield return), or
 The consumer explicitly expects deferred execution.
 
 For benchmarking your APIs fairly → always materialize with .ToList() so you’re measuring framework throughput, not the quirks of System.Text.Json + lazy iterators.
+
+# 3. Serialization cost with large payloads
+
+Minimal API has no automatic [ApiController] optimizations (like ProblemDetails or smart JSON options). Out of the box:
+
+Controller templates enable System.Text.Json source generators in .NET 8/9.
+
+Minimal API doesn’t, unless you configure it.
+
+✅ Fix: Add optimized JSON settings:
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
+
+# 4. Pipeline differences
+
+Minimal API doesn’t add filters, formatters, or MVC abstractions — which is why you’d expect it to be faster.
+
+But in real-world benchmarks, the cost of serialization + data structure access dominates, making Minimal API look worse if those aren’t optimized.
