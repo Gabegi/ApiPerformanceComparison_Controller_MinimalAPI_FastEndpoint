@@ -22,7 +22,7 @@ app.MapGet("/products/{id:int}", ([FromRoute] int id, [FromServices] ConcurrentD
 
 // List products (NO ToList → avoid allocations)
 app.MapGet("/products/list", (int count, [FromServices] ConcurrentDictionary<int, Product> products) =>
-    Results.Ok(products.Values.Take(count)));
+    Results.Ok(products.Values.Take(count).ToList()));
 
 // Create
 app.MapPost("/products", (Product product, [FromServices] ConcurrentDictionary<int, Product> products) =>
