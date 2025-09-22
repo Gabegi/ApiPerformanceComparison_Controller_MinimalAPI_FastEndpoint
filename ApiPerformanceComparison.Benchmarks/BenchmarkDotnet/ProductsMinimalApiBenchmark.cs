@@ -1,5 +1,6 @@
 using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.Shared.Requests;
+using ApiPerformanceComparison.MinimalApi;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Collections.Concurrent;
@@ -165,30 +166,26 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             }
         }
 
-        // Separate cold start test
         [Benchmark]
         [BenchmarkCategory("ColdStart")]
-        public async Task<Product?> ColdStartSingleRequest()
+        public async Task<Product?> MinimalApi_ColdStart()
         {
-
             var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
             var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
 
-            // Create fresh factory to measure true cold start
-            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+            using var factory = new WebApplicationFactory<>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        var testProducts = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
-                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
-                        services.AddSingleton(testProducts);
+                        services.AddSingleton(concurrentSeeded);
                     }));
             using var client = factory.CreateClient();
-            
+
             var response = await client.GetAsync("/products/1");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Product>();
         }
+
 
         [GlobalCleanup]
         public void Cleanup()
