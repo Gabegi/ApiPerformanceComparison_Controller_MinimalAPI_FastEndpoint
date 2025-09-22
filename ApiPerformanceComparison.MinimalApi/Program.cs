@@ -6,15 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Seed products into a thread-safe dictionary
-var seeded = QuickSeeder.SeedProducts(10_000)
-    .ToDictionary(p => p.Id);
-var productsDict = new ConcurrentDictionary<int, Product>(seeded);
-var maxId = new AtomicCounter(productsDict.Keys.Max());
-
-// Register services
-builder.Services.AddSingleton(productsDict);
-builder.Services.AddSingleton(maxId);
+// Register services (datasets will be injected by benchmarks)
+builder.Services.AddSingleton<ConcurrentDictionary<int, Product>>();
+builder.Services.AddSingleton<AtomicCounter>();
 
 var app = builder.Build();
 

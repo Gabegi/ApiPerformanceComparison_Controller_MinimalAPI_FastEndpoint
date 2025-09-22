@@ -394,3 +394,6 @@ DELETE /products/{id}
 Here’s the catch:
 
 System.Text.Json doesn’t stream IEnumerable<T> by default — it buffers the entire enumeration into a List<T> before serializing.
+
+# seeding
+That means: don’t seed inside the API project, only register empty singletons that the benchmark harness can override with different datasets.

@@ -4,17 +4,9 @@ using FastEndpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Seed products and use ConcurrentDictionary for thread-safe operations
-var seeded = QuickSeeder.SeedProducts(10_000)
-    .ToDictionary(p => p.Id);
-var productsDict = new ConcurrentDictionary<int, Product>(seeded);
-
-// Atomic counter to generate unique IDs
-var maxId = new AtomicCounter(productsDict.Keys.Max());
-
-// Register services
-builder.Services.AddSingleton(productsDict);
-builder.Services.AddSingleton(maxId);
+// Register services (datasets will be injected by benchmarks)
+builder.Services.AddSingleton<ConcurrentDictionary<int, Product>>();
+builder.Services.AddSingleton<AtomicCounter>();
 
 // Register FastEndpoints
 builder.Services.AddFastEndpoints();
@@ -33,7 +25,7 @@ app.UseFastEndpoints();
 // Run the app
 app.Run();
 
-// Optional: entry point marker for FastEndpoints
+// Entry point marker for FastEndpoints (used by benchmarks)
 namespace ApiPerformanceComparison.FastEndpoints
 {
     public sealed class FastEndpointsEntryPoint { }
