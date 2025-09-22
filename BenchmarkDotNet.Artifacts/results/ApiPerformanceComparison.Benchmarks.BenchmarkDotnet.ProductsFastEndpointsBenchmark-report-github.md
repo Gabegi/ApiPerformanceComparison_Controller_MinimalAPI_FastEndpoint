@@ -9,17 +9,19 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 Job=.NET 9.0  Runtime=.NET 9.0  
 
 ```
-| Method                   | Mean         | Error        | StdDev       | Median       | Gen0      | Gen1      | Gen2     | Allocated   |
-|------------------------- |-------------:|-------------:|-------------:|-------------:|----------:|----------:|---------:|------------:|
-| ColdStartSingleRequest   | 25,808.31 μs |   812.044 μs | 2,381.583 μs | 25,074.00 μs |  906.2500 |  375.0000 | 125.0000 |  5093.16 KB |
-| CreateProduct            |     93.97 μs |     4.695 μs |    13.243 μs |     88.49 μs |    3.9063 |    0.4883 |        - |    16.55 KB |
-| DeleteProduct            |           NA |           NA |           NA |           NA |        NA |        NA |       NA |          NA |
-| GetMediumDataset         | 24,442.91 μs | 1,353.781 μs | 3,884.252 μs | 22,454.91 μs | 1285.7143 | 1142.8571 | 857.1429 | 10171.35 KB |
-| GetSingleProduct         |     51.39 μs |     1.267 μs |     3.615 μs |     51.18 μs |    2.9297 |         - |        - |    12.81 KB |
-| GetSmallDataset          |  2,165.29 μs |    42.770 μs |    69.066 μs |  2,153.88 μs |  156.2500 |   93.7500 |  70.3125 |   725.66 KB |
-| ConcurrentSingleRequests |    743.84 μs |    14.723 μs |    28.012 μs |    741.70 μs |  113.2813 |   82.0313 |        - |   606.32 KB |
-| ConcurrentSmallDatasets  |  4,463.80 μs |   158.168 μs |   456.351 μs |  4,475.98 μs |  500.0000 |  453.1250 | 328.1250 |  5245.58 KB |
-| UpdateProduct            |     85.93 μs |     2.825 μs |     7.828 μs |     83.57 μs |    3.9063 |         - |        - |     16.2 KB |
+| Method                   | Mean         | Error      | StdDev       | Median       | Gen0     | Gen1    | Allocated  |
+|------------------------- |-------------:|-----------:|-------------:|-------------:|---------:|--------:|-----------:|
+| ColdStartSingleRequest   | 20,260.21 μs | 619.748 μs | 1,807.834 μs | 20,703.70 μs | 468.7500 | 31.2500 | 2894.52 KB |
+| CreateProduct            |     84.41 μs |   1.660 μs |     2.773 μs |     84.00 μs |   3.9063 |  0.4883 |   16.58 KB |
+| DeleteProduct            |           NA |         NA |           NA |           NA |       NA |      NA |         NA |
+| GetMediumDataset         |    290.45 μs |   5.623 μs |     8.919 μs |    291.60 μs |  15.6250 |  1.9531 |   64.29 KB |
+| GetSingleProduct         |           NA |         NA |           NA |           NA |       NA |      NA |         NA |
+| GetSmallDataset          |    301.36 μs |   6.144 μs |    17.430 μs |    303.99 μs |  15.6250 |  1.9531 |   65.78 KB |
+| ConcurrentSingleRequests |           NA |         NA |           NA |           NA |       NA |      NA |         NA |
+| ConcurrentSmallDatasets  |    674.78 μs |  22.259 μs |    64.221 μs |    661.39 μs | 111.3281 | 60.5469 |  477.72 KB |
+| UpdateProduct            |     84.86 μs |   2.319 μs |     6.504 μs |     82.41 μs |   3.9063 |       - |    16.2 KB |
 
 Benchmarks with issues:
   ProductsFastEndpointsBenchmark.DeleteProduct: .NET 9.0(Runtime=.NET 9.0)
+  ProductsFastEndpointsBenchmark.GetSingleProduct: .NET 9.0(Runtime=.NET 9.0)
+  ProductsFastEndpointsBenchmark.ConcurrentSingleRequests: .NET 9.0(Runtime=.NET 9.0)

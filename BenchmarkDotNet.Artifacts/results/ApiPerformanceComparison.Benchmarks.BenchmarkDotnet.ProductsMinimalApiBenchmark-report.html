@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsMinimalApiBenchmark-20250921-095923</title>
+<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsMinimalApiBenchmark-20250922-223118</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -23,17 +23,17 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 </code></pre>
 
 <table>
-<thead><tr><th>Method            </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+<thead><tr><th>Method            </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>ColdStartSingleRequest</td><td>26,174.34 &mu;s</td><td>678.303 &mu;s</td><td>1,856.843 &mu;s</td><td>656.2500</td><td>375.0000</td><td>125.0000</td><td>3579.59 KB</td>
-</tr><tr><td>CreateProduct</td><td>69.62 &mu;s</td><td>3.015 &mu;s</td><td>8.203 &mu;s</td><td>3.4180</td><td>0.4883</td><td>-</td><td>14.58 KB</td>
-</tr><tr><td>DeleteProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
-</tr><tr><td>GetMediumDataset</td><td>348.39 &mu;s</td><td>5.450 &mu;s</td><td>9.401 &mu;s</td><td>15.6250</td><td>-</td><td>-</td><td>64.59 KB</td>
-</tr><tr><td>GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
-</tr><tr><td>GetSmallDataset</td><td>360.46 &mu;s</td><td>6.773 &mu;s</td><td>17.960 &mu;s</td><td>15.6250</td><td>1.9531</td><td>-</td><td>64.04 KB</td>
-</tr><tr><td>ConcurrentSingleRequests</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
-</tr><tr><td>ConcurrentSmallDatasets</td><td>701.24 &mu;s</td><td>20.229 &mu;s</td><td>56.055 &mu;s</td><td>101.5625</td><td>46.8750</td><td>-</td><td>451.25 KB</td>
-</tr><tr><td>UpdateProduct</td><td>78.44 &mu;s</td><td>3.420 &mu;s</td><td>9.645 &mu;s</td><td>3.4180</td><td>-</td><td>-</td><td>14.61 KB</td>
+</thead><tbody><tr><td>ColdStartSingleRequest</td><td>13,903.46 &mu;s</td><td>258.828 &mu;s</td><td>540.270 &mu;s</td><td>13,728.70 &mu;s</td><td>250.0000</td><td>218.7500</td><td>31.2500</td><td>973.04 KB</td>
+</tr><tr><td>CreateProduct</td><td>37.84 &mu;s</td><td>0.865 &mu;s</td><td>2.339 &mu;s</td><td>37.80 &mu;s</td><td>3.4180</td><td>0.4883</td><td>-</td><td>14.55 KB</td>
+</tr><tr><td>DeleteProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>GetMediumDataset</td><td>287.53 &mu;s</td><td>5.724 &mu;s</td><td>11.298 &mu;s</td><td>292.53 &mu;s</td><td>14.6484</td><td>1.9531</td><td>-</td><td>62.93 KB</td>
+</tr><tr><td>GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>GetSmallDataset</td><td>278.92 &mu;s</td><td>5.854 &mu;s</td><td>16.511 &mu;s</td><td>284.53 &mu;s</td><td>14.6484</td><td>-</td><td>-</td><td>63.05 KB</td>
+</tr><tr><td>ConcurrentSingleRequests</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>ConcurrentSmallDatasets</td><td>572.32 &mu;s</td><td>6.448 &mu;s</td><td>9.248 &mu;s</td><td>571.59 &mu;s</td><td>109.3750</td><td>48.8281</td><td>-</td><td>475.24 KB</td>
+</tr><tr><td>UpdateProduct</td><td>39.15 &mu;s</td><td>1.606 &mu;s</td><td>4.370 &mu;s</td><td>38.36 &mu;s</td><td>3.4180</td><td>-</td><td>-</td><td>14.58 KB</td>
 </tr></tbody></table>
 </body>
 </html>

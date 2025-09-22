@@ -112,11 +112,21 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         [BenchmarkCategory("DeleteOperation")]
         public async Task DeleteProduct()
         {
-            var productId = _random.Next(1, 100);
-            var response = await _client!.DeleteAsync($"/products/{productId}");
-            response.EnsureSuccessStatusCode();
-            response.Dispose();
+            // First create a product
+            var createResponse = await _client!.PostAsJsonAsync("/products", new Product
+            {
+                Name = "ToDelete",
+                Price = 1.23m
+            });
+            createResponse.EnsureSuccessStatusCode();
+            var created = await createResponse.Content.ReadFromJsonAsync<Product>();
+
+            // Then delete it
+            var deleteResponse = await _client.DeleteAsync($"/products/{created!.Id}");
+            deleteResponse.EnsureSuccessStatusCode();
+            deleteResponse.Dispose();
         }
+
 
         [Benchmark]
         [BenchmarkCategory("Throughput")]

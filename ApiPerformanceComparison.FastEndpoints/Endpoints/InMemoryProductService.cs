@@ -14,12 +14,16 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumera
     }
 
     public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
-{
-    var products = Resolve<ConcurrentDictionary<int, Product>>();
+    {
+        var products = Resolve<ConcurrentDictionary<int, Product>>();
 
-    var result = products.Values.Take(req.Count);
-    return SendOkAsync(result, ct);
-}
+        var result = products.Values
+                             .Take(req.Count)
+                             .ToList(); // <-- important!
+
+        return SendOkAsync(result, ct);
+    }
+
 
 }
 

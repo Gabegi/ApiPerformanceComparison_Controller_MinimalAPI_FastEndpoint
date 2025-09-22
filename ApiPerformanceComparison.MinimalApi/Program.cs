@@ -20,13 +20,16 @@ if (!app.Environment.IsEnvironment("Testing"))
 
 // List products endpoint
 app.MapGet("/products/list", (int count, [FromServices] ConcurrentDictionary<int, Product> products) =>
-    products.Values.Take(count)
+    Results.Ok(products.Values.Take(count).ToList())
 );
 
-// Get single product by ID
+// Get single product
 app.MapGet("/products/{id:int}", (int id, [FromServices] ConcurrentDictionary<int, Product> products) =>
-    products.TryGetValue(id, out var product) ? Results.Ok(product) : Results.NotFound()
+    products.TryGetValue(id, out var product)
+        ? Results.Ok(product)
+        : Results.NotFound()
 );
+
 
 // Create new product
 app.MapPost("/products", (Product newProduct, [FromServices] ConcurrentDictionary<int, Product> products, [FromServices] AtomicCounter counter) =>

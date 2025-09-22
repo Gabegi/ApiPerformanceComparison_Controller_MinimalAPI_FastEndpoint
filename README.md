@@ -397,3 +397,91 @@ System.Text.Json doesn’t stream IEnumerable<T> by default — it buffers the e
 
 # seeding
 That means: don’t seed inside the API project, only register empty singletons that the benchmark harness can override with different datasets.
+
+# 🖥️ Test Environment
+
+CPU: Intel i7-8650U (Kaby Lake R, 4c/8t, 1.9–2.1GHz)
+
+Runtime: .NET 9.0.9, RyuJIT AVX2
+
+OS: Windows 11 (24H2)
+
+So this is a laptop-class CPU, not a high-throughput server CPU, which makes latency/GC overhead more visible.
+
+# Tolist()
+Great question 👌 — this comes down to how ASP.NET Core serializes responses and what happens when you give it a lazy IEnumerable<T> instead of a materialized collection like List<T>.
+
+🔍 What happens without .ToList()
+
+When you do:
+
+return Results.Ok(products.Values.Take(count));
+
+
+or in FastEndpoints:
+
+await SendOkAsync(products.Values.Take(count));
+
+
+You are giving the framework a lazy iterator (System.Linq.Enumerable+TakeIterator):
+
+It doesn’t actually contain the products.
+
+It only knows how to fetch them, one at a time, when enumerated.
+
+Now the JSON serializer (System.Text.Json) comes in:
+
+It starts iterating through the IEnumerable<Product>.
+
+Each call yields one product.
+
+It serializes each product immediately.
+
+Sounds fine, but…
+
+👉 Each enumeration step involves iterator state machines, virtual calls, and concurrency checks (ConcurrentDictionary.Values). That adds lots of overhead per item.
+
+👉 For small datasets (10–100 items), you barely notice.
+👉 For medium/large datasets (1k–10k+ items), you suddenly pay a huge performance tax (extra allocations, slower serialization).
+
+✅ What happens with .ToList()
+
+When you do:
+
+var result = products.Values.Take(count).ToList();
+return Results.Ok(result);
+
+
+You force immediate evaluation of the query:
+
+All count products are copied into a List<Product> (one memory allocation + bulk copy).
+
+The JSON serializer now sees a simple List<Product> with a backing array.
+
+It can index directly into the array, iterate very efficiently, and serialize faster.
+
+👉 This removes all iterator overhead, all lazy-enumeration machinery, and concurrency checks.
+
+⚡ Performance difference
+
+In real benchmarks:
+
+Lazy IEnumerable serialization can be 5–15× slower for 10k+ elements.
+
+List<T> serialization is essentially optimal — one allocation, sequential memory access, cache-friendly.
+
+That’s why in Controller APIs, you almost always see people return ToList(), and why your Minimal API & FastEndpoints were lagging: they were feeding the serializer lazy iterators.
+
+📝 Rule of thumb
+
+Return List<T> or Array for datasets (anything more than 1 item).
+
+Return the raw object (Product) for single lookups.
+
+Only use lazy IEnumerable<T> if:
+
+You’re streaming results (e.g., with IAsyncEnumerable<T> and yield return), or
+
+The consumer explicitly expects deferred execution.
+
+For benchmarking your APIs fairly → always materialize with .ToList() so you’re measuring framework throughput, not the quirks of System.Text.Json + lazy iterators.
