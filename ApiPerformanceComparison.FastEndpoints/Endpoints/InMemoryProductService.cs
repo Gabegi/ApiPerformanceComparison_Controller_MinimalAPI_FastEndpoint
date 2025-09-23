@@ -1,10 +1,26 @@
-﻿
-using FastEndpoints;
+﻿using FastEndpoints;
 using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.FastEndpoints.Requests;
 using System.Collections.Concurrent;
 
-// GetProductsList Endpoint
+//
+// Shared AtomicCounter service for safe ID generation
+//
+public class AtomicCounter
+{
+    private int _counter;
+
+    public AtomicCounter(int seed = 0)
+    {
+        _counter = seed;
+    }
+
+    public int GetNext() => Interlocked.Increment(ref _counter);
+}
+
+//
+// GET /products/list
+//
 public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumerable<Product>>
 {
     public override void Configure()
@@ -15,7 +31,7 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumera
 
     public override Task HandleAsync(GetProductsListRequest req, CancellationToken ct)
     {
-        var products = Resolve<Dictionary<int, Product>>();  // ✅ use Dictionary
+        var products = Resolve<ConcurrentDictionary<int, Product>>();
 
         var result = products.Values
                              .Take(req.Count)
@@ -25,7 +41,9 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumera
     }
 }
 
-// GetProduct Endpoint
+//
+// GET /products/{id}
+//
 public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
 {
     public override void Configure()
@@ -36,7 +54,7 @@ public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
 
     public override Task HandleAsync(GetProductRequest req, CancellationToken ct)
     {
-        var products = Resolve<Dictionary<int, Product>>(); // ✅ use Dictionary
+        var products = Resolve<ConcurrentDictionary<int, Product>>();
 
         if (products.TryGetValue(req.Id, out var product))
             return SendOkAsync(product, ct);
@@ -45,7 +63,9 @@ public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
     }
 }
 
-// CreateProduct Endpoint
+//
+// POST /products
+//
 public class CreateProductEndpoint : Endpoint<Product, Product>
 {
     public override void Configure()
@@ -59,7 +79,7 @@ public class CreateProductEndpoint : Endpoint<Product, Product>
         if (req == null)
             return SendErrorsAsync(cancellation: ct);
 
-        var products = Resolve<ConcurrentDictionary<int, Product>>(); // ✅ use ConcurrentDictionary
+        var products = Resolve<ConcurrentDictionary<int, Product>>();
         var counter = Resolve<AtomicCounter>();
 
         req.Id = counter.GetNext();
@@ -69,7 +89,9 @@ public class CreateProductEndpoint : Endpoint<Product, Product>
     }
 }
 
-// UpdateProduct Endpoint
+//
+// PUT /products/{id}
+//
 public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
 {
     public override void Configure()
@@ -80,7 +102,7 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
 
     public override Task HandleAsync(UpdateProductRequest req, CancellationToken ct)
     {
-        var products = Resolve<ConcurrentDictionary<int, Product>>(); // ✅ use ConcurrentDictionary
+        var products = Resolve<ConcurrentDictionary<int, Product>>();
 
         if (!products.TryGetValue(req.Id, out var existingProduct))
             return SendNotFoundAsync(ct);
@@ -92,7 +114,9 @@ public class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Product>
     }
 }
 
-// DeleteProduct Endpoint
+//
+// DELETE /products/{id}
+//
 public class DeleteProductEndpoint : Endpoint<DeleteProductRequest>
 {
     public override void Configure()
@@ -103,7 +127,7 @@ public class DeleteProductEndpoint : Endpoint<DeleteProductRequest>
 
     public override Task HandleAsync(DeleteProductRequest req, CancellationToken ct)
     {
-        var products = Resolve<ConcurrentDictionary<int, Product>>(); // ✅ use ConcurrentDictionary
+        var products = Resolve<ConcurrentDictionary<int, Product>>();
 
         if (products.TryRemove(req.Id, out _))
             return SendNoContentAsync(ct);

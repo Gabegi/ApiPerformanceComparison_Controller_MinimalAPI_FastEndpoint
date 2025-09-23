@@ -1,5 +1,6 @@
 ﻿using ApiPerformanceComparison.Shared;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Concurrent;
 
 namespace ApiPerformanceComparison.Controllers
 {
@@ -7,10 +8,10 @@ namespace ApiPerformanceComparison.Controllers
     [Route("products")]
     public class ProductsController : ControllerBase
     {
-        private readonly Dictionary<int, Product> _products;
+        private readonly ConcurrentDictionary<int, Product> _products;
         private readonly AtomicCounter _counter;
 
-        public ProductsController(Dictionary<int, Product> products, AtomicCounter counter)
+        public ProductsController(ConcurrentDictionary<int, Product> products, AtomicCounter counter)
         {
             _products = products;
             _counter = counter;
@@ -19,18 +20,16 @@ namespace ApiPerformanceComparison.Controllers
         [HttpGet("list")]
         public IActionResult GetProducts(int count)
         {
-            var result = _products.Values.Take(count);
+            var result = _products.Values.Take(count).ToList();
             return Ok(result);
         }
-
 
         [HttpGet("{id:int}")]
         public IActionResult GetProduct(int id)
         {
-            if (_products.TryGetValue(id, out var product))
-                return Ok(product);
-
-            return NotFound();
+            return _products.TryGetValue(id, out var product)
+                ? Ok(product)
+                : NotFound();
         }
 
         [HttpPost]
@@ -60,10 +59,9 @@ namespace ApiPerformanceComparison.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteProduct(int id)
         {
-            if (_products.Remove(id))
-                return NoContent();
-
-            return NotFound();
+            return _products.TryRemove(id, out _)
+                ? NoContent()
+                : NotFound();
         }
     }
 }
