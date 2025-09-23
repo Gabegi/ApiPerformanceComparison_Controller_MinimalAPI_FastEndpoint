@@ -535,3 +535,10 @@ Avoid ToList() in Minimal APIs for datasets larger than a few items.
 Streaming (IEnumerable + Take) keeps memory allocations low and concurrency fast.
 
 For single items, ToList() is negligible.
+
+# ToList()
+That .ToList() call copies all the count items into a new List<Product> before serialization.
+
+For small or medium datasets (1,000 – 10,000 items), this creates huge allocations and slows down serialization.
+
+Controllers and FastEndpoints don’t pay the same penalty because the serializer can stream directly from the IEnumerable.

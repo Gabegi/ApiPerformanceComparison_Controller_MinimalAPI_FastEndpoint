@@ -1,228 +1,298 @@
-//using NBomber.CSharp;
+using NBomber.Contracts;
+using NBomber.Contracts.Stats;
+using NBomber.CSharp;
 
-//namespace ApiPerformanceComparison.Benchmarks.LoadTesting
-//{
-//    public class ApiFrameworkLoadTests
-//    {
-//        private readonly HttpClient _httpClient;
+namespace ApiPerformanceComparison.Benchmarks.LoadTesting
+{
+    public class ApiFrameworkLoadTests : IDisposable
+    {
+        private readonly HttpClient _httpClient;
 
-//        public ApiFrameworkLoadTests()
-//        {
-//            _httpClient = new HttpClient
-//            {
-//                Timeout = TimeSpan.FromSeconds(30)
-//            };
-//        }
+        private readonly string[] _endpoints = new[]
+        {
+            "http://localhost:5001", // Controllers
+            "http://localhost:5002", // Minimal API
+            "http://localhost:5003"  // FastEndpoints
+        };
 
-//        public void RunBasicCapacityTest()
-//        {
-//            var controllerScenario = CreateScenario("controller", "http://localhost:5001");
-//            var minimalApiScenario = CreateScenario("minimal_api", "http://localhost:5002");
-//            var fastEndpointsScenario = CreateScenario("fastendpoints", "http://localhost:5003");
+        public ApiFrameworkLoadTests()
+        {
+            _httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+        }
 
-//            NBomberRunner
-//                .RegisterScenarios(controllerScenario, minimalApiScenario, fastEndpointsScenario)
-//                .WithReportFolder("load_test_results")
-//                .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
-//                .Run();
-//        }
+        // =========================
+        // BASIC CAPACITY TEST
+        // =========================
+        public void RunBasicCapacityTest()
+        {
+            // Test each endpoint separately
+            var scenario1 = Scenario.Create("basic_controllers", async context =>
+            {
+                var productId = Random.Shared.Next(1, 1000);
+                try
+                {
+                    var response = await _httpClient.GetAsync($"{_endpoints[0]}/products/{productId}");
+                    return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                }
+                catch
+                {
+                    return Response.Fail();
+                }
+            })
+            .WithLoadSimulations(
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),
+                Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),
+                Simulation.Inject(rate: 200, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2))
+            );
 
-//        public void RunSpikeTest()
-//        {
-//            var spikeScenario = Scenario.Create("spike_test", async context =>
-//            {
-//                // Test all frameworks under spike conditions
-//                var endpoints = new[]
-//                {
-//                    "http://localhost:5001", // Controller
-//                    "http://localhost:5002", // Minimal API
-//                    "http://localhost:5003"  // FastEndpoints
-//                };
+            var scenario2 = Scenario.Create("basic_minimal_api", async context =>
+            {
+                var productId = Random.Shared.Next(1, 1000);
+                try
+                {
+                    var response = await _httpClient.GetAsync($"{_endpoints[1]}/products/{productId}");
+                    return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                }
+                catch
+                {
+                    return Response.Fail();
+                }
+            })
+            .WithLoadSimulations(
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),
+                Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),
+                Simulation.Inject(rate: 200, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2))
+            );
 
-//                var endpoint = endpoints[Random.Shared.Next(endpoints.Length)];
-//                var productId = Random.Shared.Next(1, 1000);
-                
-//                var response = await _httpClient.GetAsync($"{endpoint}/products/{productId}");
-//                return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
-//            })
-//            .WithLoadSimulations(
-//                Simulation.InjectPerSec(rate: 50, during: TimeSpan.FromMinutes(2)),   // Baseline
-//                Simulation.InjectPerSec(rate: 500, during: TimeSpan.FromMinutes(1)),  // Spike
-//                Simulation.InjectPerSec(rate: 50, during: TimeSpan.FromMinutes(2))    // Recovery
-//            );
+            var scenario3 = Scenario.Create("basic_fast_endpoints", async context =>
+            {
+                var productId = Random.Shared.Next(1, 1000);
+                try
+                {
+                    var response = await _httpClient.GetAsync($"{_endpoints[2]}/products/{productId}");
+                    return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                }
+                catch
+                {
+                    return Response.Fail();
+                }
+            })
+            .WithLoadSimulations(
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),
+                Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),
+                Simulation.Inject(rate: 200, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2))
+            );
 
-//            NBomberRunner
-//                .RegisterScenarios(spikeScenario)
-//                .WithReportFolder("spike_test_results")
-//                .WithReportFormats(ReportFormat.Html)
-//                .Run();
-//        }
+            NBomberRunner
+                .RegisterScenarios(scenario1, scenario2, scenario3)
+                .WithReportFolder("load_test_results")
+                .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
+                .Run();
+        }
 
-//        public void RunMixedWorkloadTest()
-//        {
-//            var mixedWorkloadScenario = Scenario.Create("mixed_workload", async context =>
-//            {
-//                var endpoint = SelectEndpoint();
-//                var workloadType = Random.Shared.NextDouble();
+        // =========================
+        // SPIKE TEST
+        // =========================
+        public void RunSpikeTest()
+        {
+            var spikeScenario = Scenario.Create("spike_test", async context =>
+            {
+                var endpoint = _endpoints[Random.Shared.Next(_endpoints.Length)];
+                var productId = Random.Shared.Next(1, 1000);
 
-//                try
-//                {
-//                    if (workloadType < 0.7) // 70% - Single product requests
-//                    {
-//                        var productId = Random.Shared.Next(1, 1000);
-//                        var response = await _httpClient.GetAsync($"{endpoint}/products/{productId}");
-//                        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
-//                    }
-//                    else if (workloadType < 0.9) // 20% - Small dataset requests
-//                    {
-//                        var response = await _httpClient.GetAsync($"{endpoint}/products/list?count=100");
-//                        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
-//                    }
-//                    else // 10% - Medium dataset requests
-//                    {
-//                        var response = await _httpClient.GetAsync($"{endpoint}/products/list?count=1000");
-//                        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
-//                    }
-//                }
-//                catch (Exception)
-//                {
-//                    return Response.Fail();
-//                }
-//            })
-//            .WithLoadSimulations(
-//                Simulation.KeepConstant(copies: 25, during: TimeSpan.FromMinutes(1)),   // Warm up
-//                Simulation.KeepConstant(copies: 50, during: TimeSpan.FromMinutes(3)),   // Baseline load
-//                Simulation.KeepConstant(copies: 100, during: TimeSpan.FromMinutes(3)),  // Increased load
-//                Simulation.KeepConstant(copies: 150, during: TimeSpan.FromMinutes(2))   // High load
-//            );
+                try
+                {
+                    var response = await _httpClient.GetAsync($"{endpoint}/products/{productId}");
+                    return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                }
+                catch
+                {
+                    return Response.Fail();
+                }
+            })
+            .WithLoadSimulations(
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2)),   // baseline
+                Simulation.Inject(rate: 500, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1)),  // spike
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(2))    // recovery
+            );
 
-//            NBomberRunner
-//                .RegisterScenarios(mixedWorkloadScenario)
-//                .WithReportFolder("mixed_workload_results")
-//                .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
-//                .Run();
-//        }
+            NBomberRunner
+                .RegisterScenarios(spikeScenario)
+                .WithReportFolder("spike_test_results")
+                .WithReportFormats(ReportFormat.Html)
+                .Run();
+        }
 
-//        public void RunBreakingPointTest()
-//        {
-//            var breakingPointScenario = CreateScenario("breaking_point", "http://localhost:5001"); // Test one at a time
+        // =========================
+        // MIXED WORKLOAD TEST
+        // =========================
+        public void RunMixedWorkloadTest()
+        {
+            var mixedScenario = Scenario.Create("mixed_workload", async context =>
+            {
+                var endpoint = _endpoints[Random.Shared.Next(_endpoints.Length)];
+                var workloadType = Random.Shared.NextDouble();
 
-//            NBomberRunner
-//                .RegisterScenarios(breakingPointScenario)
-//                .WithLoadSimulations(
-//                    Simulation.InjectPerSec(rate: 50, during: TimeSpan.FromMinutes(1)),
-//                    Simulation.InjectPerSec(rate: 100, during: TimeSpan.FromMinutes(1)),
-//                    Simulation.InjectPerSec(rate: 200, during: TimeSpan.FromMinutes(1)),
-//                    Simulation.InjectPerSec(rate: 500, during: TimeSpan.FromMinutes(1)),
-//                    Simulation.InjectPerSec(rate: 1000, during: TimeSpan.FromMinutes(1)),
-//                    Simulation.InjectPerSec(rate: 2000, during: TimeSpan.FromMinutes(1))
-//                )
-//                .WithReportFolder("breaking_point_results")
-//                .WithReportFormats(ReportFormat.Html)
-//                .Run();
-//        }
+                try
+                {
+                    if (workloadType < 0.7) // 70% single product
+                    {
+                        var productId = Random.Shared.Next(1, 1000);
+                        var response = await _httpClient.GetAsync($"{endpoint}/products/{productId}");
+                        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                    }
+                    else if (workloadType < 0.9) // 20% small dataset
+                    {
+                        var response = await _httpClient.GetAsync($"{endpoint}/products/list?count=100");
+                        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                    }
+                    else // 10% medium dataset
+                    {
+                        var response = await _httpClient.GetAsync($"{endpoint}/products/list?count=1000");
+                        return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                    }
+                }
+                catch
+                {
+                    return Response.Fail();
+                }
+            })
+            .WithLoadSimulations(
+                Simulation.KeepConstant(copies: 25, during: TimeSpan.FromMinutes(1)),
+                Simulation.KeepConstant(copies: 50, during: TimeSpan.FromMinutes(3)),
+                Simulation.KeepConstant(copies: 100, during: TimeSpan.FromMinutes(3)),
+                Simulation.KeepConstant(copies: 150, during: TimeSpan.FromMinutes(2))
+            );
 
-//        private Scenario CreateScenario(string name, string baseUrl)
-//        {
-//            return Scenario.Create(name, async context =>
-//            {
-//                try
-//                {
-//                    var productId = Random.Shared.Next(1, 1000);
-//                    var response = await _httpClient.GetAsync($"{baseUrl}/products/{productId}");
-                    
-//                    return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
-//                }
-//                catch (Exception)
-//                {
-//                    return Response.Fail();
-//                }
-//            })
-//            .WithLoadSimulations(
-//                Simulation.KeepConstant(copies: 50, during: TimeSpan.FromMinutes(2)),
-//                Simulation.KeepConstant(copies: 100, during: TimeSpan.FromMinutes(2)),
-//                Simulation.KeepConstant(copies: 200, during: TimeSpan.FromMinutes(2))
-//            );
-//        }
+            NBomberRunner
+                .RegisterScenarios(mixedScenario)
+                .WithReportFolder("mixed_workload_results")
+                .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
+                .Run();
+        }
 
-//        private string SelectEndpoint()
-//        {
-//            var endpoints = new[]
-//            {
-//                "http://localhost:5001", // Controller
-//                "http://localhost:5002", // Minimal API
-//                "http://localhost:5003"  // FastEndpoints
-//            };
+        // =========================
+        // BREAKING POINT TEST
+        // =========================
+        public void RunBreakingPointTest(string endpoint)
+        {
+            var scenario = Scenario.Create($"breaking_point_{GetName(endpoint)}", async context =>
+            {
+                var productId = Random.Shared.Next(1, 1000);
+                try
+                {
+                    var response = await _httpClient.GetAsync($"{endpoint}/products/{productId}");
+                    return response.IsSuccessStatusCode ? Response.Ok() : Response.Fail();
+                }
+                catch
+                {
+                    return Response.Fail();
+                }
+            })
+            .WithLoadSimulations(
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1)),
+                Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1)),
+                Simulation.Inject(rate: 200, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1)),
+                Simulation.Inject(rate: 500, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1)),
+                Simulation.Inject(rate: 1000, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1)),
+                Simulation.Inject(rate: 2000, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromMinutes(1))
+            );
 
-//            return endpoints[Random.Shared.Next(endpoints.Length)];
-//        }
+            NBomberRunner
+                .RegisterScenarios(scenario)
+                .WithReportFolder($"breaking_point_results_{GetName(endpoint)}")
+                .WithReportFormats(ReportFormat.Html)
+                .Run();
+        }
 
-//        public void Dispose()
-//        {
-//            _httpClient?.Dispose();
-//        }
-//    }
+        private string GetName(string url)
+        {
+            try
+            {
+                var uri = new Uri(url);
+                return $"{uri.Host}_{uri.Port}";
+            }
+            catch
+            {
+                return url.Replace(":", "_").Replace("/", "_");
+            }
+        }
 
-//    // Console app entry point for running load tests
-//    public class Program
-//    {
-//        public static void Main(string[] args)
-//        {
-//            var loadTester = new ApiFrameworkLoadTests();
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
+        }
+    }
 
-//            try
-//            {
-//                Console.WriteLine("API Framework Load Testing");
-//                Console.WriteLine("==========================");
-//                Console.WriteLine();
-//                Console.WriteLine("Select test to run:");
-//                Console.WriteLine("1. Basic Capacity Test (Compare all frameworks)");
-//                Console.WriteLine("2. Spike Test (Sudden load increase)");
-//                Console.WriteLine("3. Mixed Workload Test (Realistic usage patterns)");
-//                Console.WriteLine("4. Breaking Point Test (Find maximum capacity)");
-//                Console.Write("Enter choice (1-4): ");
+    // =========================
+    // CONSOLE ENTRY POINT
+    // =========================
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            using var loadTester = new ApiFrameworkLoadTests();
 
-//                var choice = Console.ReadLine();
+            Console.WriteLine("API Framework Load Testing");
+            Console.WriteLine("==========================");
+            Console.WriteLine("Select test to run:");
+            Console.WriteLine("1. Basic Capacity Test");
+            Console.WriteLine("2. Spike Test");
+            Console.WriteLine("3. Mixed Workload Test");
+            Console.WriteLine("4. Breaking Point Test");
+            Console.Write("Enter choice (1-4): ");
 
-//                switch (choice)
-//                {
-//                    case "1":
-//                        Console.WriteLine("Running Basic Capacity Test...");
-//                        loadTester.RunBasicCapacityTest();
-//                        break;
-//                    case "2":
-//                        Console.WriteLine("Running Spike Test...");
-//                        loadTester.RunSpikeTest();
-//                        break;
-//                    case "3":
-//                        Console.WriteLine("Running Mixed Workload Test...");
-//                        loadTester.RunMixedWorkloadTest();
-//                        break;
-//                    case "4":
-//                        Console.WriteLine("Running Breaking Point Test...");
-//                        Console.WriteLine("Note: Run this for each framework separately by changing the URL");
-//                        loadTester.RunBreakingPointTest();
-//                        break;
-//                    default:
-//                        Console.WriteLine("Invalid choice. Running Basic Capacity Test...");
-//                        loadTester.RunBasicCapacityTest();
-//                        break;
-//                }
+            var choice = Console.ReadLine();
 
-//                Console.WriteLine();
-//                Console.WriteLine("Load test completed! Check the results folder for detailed reports.");
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine($"Error running load test: {ex.Message}");
-//            }
-//            finally
-//            {
-//                loadTester.Dispose();
-//            }
+            try
+            {
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("Running Basic Capacity Test...");
+                        loadTester.RunBasicCapacityTest();
+                        break;
+                    case "2":
+                        Console.WriteLine("Running Spike Test...");
+                        loadTester.RunSpikeTest();
+                        break;
+                    case "3":
+                        Console.WriteLine("Running Mixed Workload Test...");
+                        loadTester.RunMixedWorkloadTest();
+                        break;
+                    case "4":
+                        Console.WriteLine("Running Breaking Point Test for each framework separately...");
+                        var endpoints = new[]
+                        {
+                            "http://localhost:5001",
+                            "http://localhost:5002",
+                            "http://localhost:5003"
+                        };
 
-//            Console.WriteLine("Press any key to exit...");
-//            Console.ReadKey();
-//        }
-//    }
-//}
+                        foreach (var endpoint in endpoints)
+                        {
+                            Console.WriteLine($"Testing {endpoint}...");
+                            loadTester.RunBreakingPointTest(endpoint);
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Running Basic Capacity Test...");
+                        loadTester.RunBasicCapacityTest();
+                        break;
+                }
+
+                Console.WriteLine("Load test completed! Check the report folders for results.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error running load test: {ex.Message}");
+            }
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
+    }
+}

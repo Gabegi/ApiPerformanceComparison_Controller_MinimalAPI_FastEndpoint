@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsMinimalApiBenchmark-20250923-003118</title>
+<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsMinimalApiBenchmark-20250923-124559</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -23,17 +23,17 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 </code></pre>
 
 <table>
-<thead><tr><th>Method            </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+<thead><tr><th>Method            </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>MinimalApi_ColdStart</td><td>11,917.74 &mu;s</td><td>235.040 &mu;s</td><td>631.421 &mu;s</td><td>171.8750</td><td>140.6250</td><td>15.6250</td><td>919.53 KB</td>
-</tr><tr><td>CreateProduct</td><td>1,154.16 &mu;s</td><td>224.713 &mu;s</td><td>662.572 &mu;s</td><td>28.8086</td><td>25.3906</td><td>25.3906</td><td>835.15 KB</td>
-</tr><tr><td>DeleteProduct</td><td>120.02 &mu;s</td><td>5.787 &mu;s</td><td>16.697 &mu;s</td><td>5.8594</td><td>-</td><td>-</td><td>25.32 KB</td>
-</tr><tr><td>GetMediumDataset</td><td>302.08 &mu;s</td><td>7.750 &mu;s</td><td>22.112 &mu;s</td><td>14.6484</td><td>-</td><td>-</td><td>63.42 KB</td>
-</tr><tr><td>GetSingleProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
-</tr><tr><td>GetSmallDataset</td><td>293.07 &mu;s</td><td>7.570 &mu;s</td><td>21.474 &mu;s</td><td>15.6250</td><td>-</td><td>-</td><td>64.58 KB</td>
-</tr><tr><td>ConcurrentSingleRequests</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
-</tr><tr><td>ConcurrentSmallDatasets</td><td>613.99 &mu;s</td><td>12.120 &mu;s</td><td>32.140 &mu;s</td><td>107.4219</td><td>41.0156</td><td>-</td><td>470.96 KB</td>
-</tr><tr><td>UpdateProduct</td><td>46.13 &mu;s</td><td>1.228 &mu;s</td><td>3.383 &mu;s</td><td>3.4180</td><td>-</td><td>-</td><td>14.59 KB</td>
+</thead><tbody><tr><td>ColdStartSingleRequest</td><td>11,959.39 &mu;s</td><td>268.044 &mu;s</td><td>760.397 &mu;s</td><td>11,737.92 &mu;s</td><td>156.2500</td><td>7.0000</td><td>-</td><td>125.0000</td><td>-</td><td>903.01 KB</td>
+</tr><tr><td>CreateProduct</td><td>47.43 &mu;s</td><td>0.964 &mu;s</td><td>2.623 &mu;s</td><td>47.45 &mu;s</td><td>3.4180</td><td>2.0000</td><td>0.0063</td><td>0.4883</td><td>-</td><td>14.57 KB</td>
+</tr><tr><td>DeleteProduct</td><td>110.84 &mu;s</td><td>4.662 &mu;s</td><td>12.997 &mu;s</td><td>105.65 &mu;s</td><td>5.8594</td><td>4.0000</td><td>-</td><td>-</td><td>-</td><td>24.85 KB</td>
+</tr><tr><td>GetMediumDataset</td><td>21,331.98 &mu;s</td><td>424.140 &mu;s</td><td>1,094.842 &mu;s</td><td>20,803.68 &mu;s</td><td>1500.0000</td><td>140.2188</td><td>-</td><td>1437.5000</td><td>1000.0000</td><td>10347.82 KB</td>
+</tr><tr><td>GetSingleProduct</td><td>39.11 &mu;s</td><td>2.887 &mu;s</td><td>7.855 &mu;s</td><td>39.03 &mu;s</td><td>2.4414</td><td>2.0000</td><td>0.0005</td><td>-</td><td>-</td><td>11.28 KB</td>
+</tr><tr><td>GetSmallDataset</td><td>2,913.40 &mu;s</td><td>126.991 &mu;s</td><td>368.423 &mu;s</td><td>2,870.82 &mu;s</td><td>187.5000</td><td>14.9141</td><td>-</td><td>117.1875</td><td>93.7500</td><td>809.06 KB</td>
+</tr><tr><td>ConcurrentSingleRequests</td><td>705.06 &mu;s</td><td>13.467 &mu;s</td><td>26.895 &mu;s</td><td>700.47 &mu;s</td><td>109.3750</td><td>100.3398</td><td>0.0117</td><td>42.9688</td><td>-</td><td>531.17 KB</td>
+</tr><tr><td>ConcurrentSmallDatasets</td><td>6,246.67 &mu;s</td><td>350.176 &mu;s</td><td>1,032.501 &mu;s</td><td>6,037.66 &mu;s</td><td>796.8750</td><td>134.3594</td><td>9.2109</td><td>531.2500</td><td>359.3750</td><td>5832.54 KB</td>
+</tr><tr><td>UpdateProduct</td><td>74.45 &mu;s</td><td>3.600 &mu;s</td><td>9.916 &mu;s</td><td>71.75 &mu;s</td><td>3.4180</td><td>2.0000</td><td>0.0034</td><td>-</td><td>-</td><td>14.61 KB</td>
 </tr></tbody></table>
 </body>
 </html>
