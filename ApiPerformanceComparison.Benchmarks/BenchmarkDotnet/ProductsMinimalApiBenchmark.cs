@@ -2,13 +2,14 @@ using ApiPerformanceComparison.Shared;
 using ApiPerformanceComparison.Shared.Requests;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Net.Http.Json;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 {
     [MemoryDiagnoser]
+    [ThreadingDiagnoser]
     [SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net90)]
     [BenchmarkCategory("MinimalAPI")]
     public class ProductsMinimalApiBenchmark
@@ -21,31 +22,38 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         private const int MEDIUM_DATASET = 10_000;
         private const int CONCURRENT_REQUESTS = 50;
 
-        [GlobalSetup]
-        public void Setup()
+        // ================================================================
+        // FACTORY HELPER
+        // ================================================================
+        private static WebApplicationFactory<T> CreateFactory<T>(int datasetSize) where T : class
         {
-            var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
-            var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
+            var seeded = QuickSeeder.SeedProducts(datasetSize).ToDictionary(p => p.Id);
+            var concurrentProducts = new ConcurrentDictionary<int, Product>(seeded);
+            var counter = new AtomicCounter(seeded.Keys.Max());
 
-            _factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
+            return new WebApplicationFactory<T>()
                 .WithWebHostBuilder(builder =>
                     builder.ConfigureServices(services =>
                     {
-                        var testProducts = QuickSeeder.SeedProducts(MEDIUM_DATASET + 100).ToDictionary(p => p.Id);
-                        services.AddSingleton(new ConcurrentDictionary<int, Product>(seeded));
-
-                        services.AddSingleton(testProducts);
+                        services.AddSingleton(concurrentProducts);
+                        services.AddSingleton(counter);
                     }));
+        }
 
+        // ================================================================
+        // GLOBAL SETUP
+        // ================================================================
+        [GlobalSetup]
+        public void Setup()
+        {
+            _factory = CreateFactory<MinimalApi.MinimalEntryPoint>(MEDIUM_DATASET + 100);
             _client = _factory.CreateClient();
-            
-            // Add warmup to eliminate JIT compilation effects
+
             WarmupAsync().GetAwaiter().GetResult();
         }
 
         private async Task WarmupAsync()
         {
-            // Warmup requests to stabilize performance
             for (int i = 0; i < 3; i++)
             {
                 var response = await _client!.GetAsync("/products/1");
@@ -53,17 +61,22 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             }
         }
 
+        // ================================================================
+        // SINGLE REQUEST TESTS
+        // ================================================================
         [Benchmark]
         [BenchmarkCategory("SingleRequest")]
         public async Task<Product?> GetSingleProduct()
         {
-            // Use random ID to prevent caching effects
             var productId = _random.Next(1, 1000);
             var response = await _client!.GetAsync($"/products/{productId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Product>();
         }
 
+        // ================================================================
+        // DATASET TESTS
+        // ================================================================
         [Benchmark]
         [BenchmarkCategory("SmallDataset")]
         public async Task<List<Product>?> GetSmallDataset()
@@ -82,14 +95,19 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             return await response.Content.ReadFromJsonAsync<List<Product>>();
         }
 
+        // ================================================================
+        // WRITE OPERATIONS
+        // ================================================================
         [Benchmark]
         [BenchmarkCategory("CreateOperation")]
         public async Task CreateProduct()
         {
-            var req = new CreateProductCall { 
-                Name = $"Product {_random.Next()}", // Unique name
-                Price = (decimal)_random.NextDouble() * 100 
+            var req = new CreateProductCall
+            {
+                Name = $"Product {_random.Next()}",
+                Price = (decimal)_random.NextDouble() * 100
             };
+
             var response = await _client!.PostAsJsonAsync("/products", req);
             response.EnsureSuccessStatusCode();
             response.Dispose();
@@ -99,20 +117,22 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         [BenchmarkCategory("UpdateOperation")]
         public async Task UpdateProduct()
         {
-            var productId = _random.Next(1, 100); // Random existing product
-            var req = new UpdateProductCall { 
-                Name = $"Updated Product {_random.Next()}", 
-                Price = (decimal)_random.NextDouble() * 100 
+            var productId = _random.Next(1, 100);
+            var req = new UpdateProductCall
+            {
+                Name = $"Updated Product {_random.Next()}",
+                Price = (decimal)_random.NextDouble() * 100
             };
+
             var response = await _client!.PutAsJsonAsync($"/products/{productId}", req);
             response.EnsureSuccessStatusCode();
             response.Dispose();
         }
+
         [Benchmark]
         [BenchmarkCategory("DeleteOperation")]
         public async Task DeleteProduct()
         {
-            // 1. Create a unique product first
             var req = new CreateProductCall
             {
                 Name = $"ToDelete {_random.Next()}",
@@ -124,14 +144,14 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             var created = await createResponse.Content.ReadFromJsonAsync<Product>();
             createResponse.Dispose();
 
-            // 2. Delete the newly created product
             var deleteResponse = await _client.DeleteAsync($"/products/{created!.Id}");
             deleteResponse.EnsureSuccessStatusCode();
             deleteResponse.Dispose();
         }
 
-
-
+        // ================================================================
+        // CONCURRENCY / THROUGHPUT
+        // ================================================================
         [Benchmark]
         [BenchmarkCategory("Throughput")]
         public async Task ConcurrentSingleRequests()
@@ -144,7 +164,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                 });
 
             var responses = await Task.WhenAll(tasks);
-            
+
             foreach (var response in responses)
             {
                 response.EnsureSuccessStatusCode();
@@ -160,7 +180,7 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                 .Select(_ => _client!.GetAsync($"/products/list?count={SMALL_DATASET}"));
 
             var responses = await Task.WhenAll(tasks);
-            
+
             foreach (var response in responses)
             {
                 response.EnsureSuccessStatusCode();
@@ -168,19 +188,14 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             }
         }
 
+        // ================================================================
+        // COLD START
+        // ================================================================
         [Benchmark]
         [BenchmarkCategory("ColdStart")]
-        public async Task<Product?> MinimalApi_ColdStart()
+        public async Task<Product?> ColdStartSingleRequest()
         {
-            var seeded = QuickSeeder.SeedProducts(100).ToDictionary(p => p.Id);
-            var concurrentSeeded = new ConcurrentDictionary<int, Product>(seeded);
-
-            using var factory = new WebApplicationFactory<MinimalApi.MinimalEntryPoint>()
-                .WithWebHostBuilder(builder =>
-                    builder.ConfigureServices(services =>
-                    {
-                        services.AddSingleton(concurrentSeeded);
-                    }));
+            using var factory = CreateFactory<MinimalApi.MinimalEntryPoint>(100);
             using var client = factory.CreateClient();
 
             var response = await client.GetAsync("/products/1");
@@ -188,7 +203,9 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             return await response.Content.ReadFromJsonAsync<Product>();
         }
 
-
+        // ================================================================
+        // CLEANUP
+        // ================================================================
         [GlobalCleanup]
         public void Cleanup()
         {
