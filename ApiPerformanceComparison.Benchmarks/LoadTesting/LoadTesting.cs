@@ -1,4 +1,3 @@
-using NBomber.Contracts;
 using NBomber.Contracts.Stats;
 using NBomber.CSharp;
 
