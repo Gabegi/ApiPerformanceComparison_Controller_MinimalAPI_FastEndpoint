@@ -46,6 +46,13 @@ public class GetProductsListEndpoint : Endpoint<GetProductsListRequest, IEnumera
 //
 public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
 {
+    private readonly ConcurrentDictionary<int, Product> _products;
+
+    public GetProductEndpoint(ConcurrentDictionary<int, Product> products)
+    {
+        _products = products;
+    }
+
     public override void Configure()
     {
         Get("/products/{id}");
@@ -54,14 +61,13 @@ public class GetProductEndpoint : Endpoint<GetProductRequest, Product>
 
     public override Task HandleAsync(GetProductRequest req, CancellationToken ct)
     {
-        var products = Resolve<ConcurrentDictionary<int, Product>>();
-
-        if (products.TryGetValue(req.Id, out var product))
+        if (_products.TryGetValue(req.Id, out var product))
             return SendOkAsync(product, ct);
 
         return SendNotFoundAsync(ct);
     }
 }
+
 
 //
 // POST /products

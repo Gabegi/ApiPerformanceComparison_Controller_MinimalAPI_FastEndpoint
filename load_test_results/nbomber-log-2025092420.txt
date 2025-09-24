@@ -1,0 +1,16 @@
+2025-09-24 20:08:52.221 +07:00 [INF] [ThreadId:2] NBomber 6.1.1 started a new session: 2025-09-24_13.08.16_session_5ddd5ae1
+2025-09-24 20:08:52.269 +07:00 [INF] [ThreadId:2] NBomber started as single node
+2025-09-24 20:08:52.272 +07:00 [INF] [ThreadId:2] License validation....
+2025-09-24 20:08:52.273 +07:00 [WRN] [ThreadId:2] THIS VERSION IS FREE ONLY FOR PERSONAL USE. You can't use it for an organization.
+2025-09-24 20:08:52.305 +07:00 [INF] [ThreadId:2] Reports folder: C:\Users\lelyg\Desktop\code\ApiPerformanceComparison_Controller_MinimalAPI_FastEndpoint\ApiPerformanceComparison.Benchmarks\bin\Release\net9.0\load_test_results
+2025-09-24 20:08:52.306 +07:00 [INF] [ThreadId:2] Plugins: no plugins were loaded
+2025-09-24 20:08:52.306 +07:00 [INF] [ThreadId:2] Reporting sinks: no reporting sinks were loaded
+2025-09-24 20:08:52.307 +07:00 [INF] [ThreadId:2] Starting init...
+2025-09-24 20:08:52.316 +07:00 [INF] [ThreadId:2] Target scenarios: basic_controllers, basic_minimal_api, basic_fast_endpoints
+2025-09-24 20:08:52.318 +07:00 [INF] [ThreadId:2] Init finished
+2025-09-24 20:08:52.357 +07:00 [INF] [ThreadId:2] Starting bombing...
+2025-09-24 20:10:36.425 +07:00 [INF] [ThreadId:4] Waiting on scenarios completion...
+2025-09-24 20:10:40.445 +07:00 [WRN] [ThreadId:10] Stopping test early: Stopping test because of too many fails. Scenario 'basic_controllers' contains '5000' fails.
+2025-09-24 20:10:43.459 +07:00 [INF] [ThreadId:110] Calculating final statistics...
+2025-09-24 20:10:43.841 +07:00 [INF] [ThreadId:10] Reports saved in folder: C:\Users\lelyg\Desktop\code\ApiPerformanceComparison_Controller_MinimalAPI_FastEndpoint\load_test_results
+2025-09-24 20:10:43.842 +07:00 [WRN] [ThreadId:10] THIS VERSION IS FREE ONLY FOR PERSONAL USE. You can't use it for an organization.
