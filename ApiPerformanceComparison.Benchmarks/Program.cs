@@ -6,6 +6,7 @@ BenchmarkRunner.Run<ProductsControllerBenchmark>();
 BenchmarkRunner.Run<ProductsMinimalApiBenchmark>();
 BenchmarkRunner.Run<ProductsFastEndpointsBenchmark>();
 BenchmarkRunner.Run<ApiPerformanceComparisonBenchmark>();
+
 var loadTester = new ApiFrameworkLoadTests();
 loadTester.RunBasicCapacityTest();
 loadTester.RunMixedWorkloadTest();
