@@ -9,14 +9,18 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 Job=.NET 9.0  Runtime=.NET 9.0  
 
 ```
-| Method                   | Mean        | Error       | StdDev      | Median       | Gen0      | Completed Work Items | Lock Contentions | Gen1      | Gen2      | Allocated   |
-|------------------------- |------------:|------------:|------------:|-------------:|----------:|---------------------:|-----------------:|----------:|----------:|------------:|
-| ColdStartSingleRequest   | 11,786.1 μs |   380.24 μs | 1,090.99 μs | 11,563.20 μs |  265.6250 |               7.0000 |                - |  109.3750 |   15.6250 |  1416.36 KB |
-| CreateProduct            |    103.0 μs |     2.77 μs |     7.34 μs |    101.82 μs |    4.8828 |               2.0000 |                - |    0.4883 |         - |    20.59 KB |
-| DeleteProduct            |    166.2 μs |     5.88 μs |    16.21 μs |    161.96 μs |    7.8125 |               4.0000 |                - |         - |         - |    34.35 KB |
-| GetMediumDataset         | 24,123.4 μs | 1,084.21 μs | 3,075.73 μs | 22,767.75 μs | 1468.7500 |             135.0938 |                - | 1437.5000 | 1000.0000 | 10285.24 KB |
-| GetSingleProduct         |    100.5 μs |     1.88 μs |     4.02 μs |     99.55 μs |    3.4180 |               1.9995 |           0.0010 |         - |         - |    15.16 KB |
-| GetSmallDataset          |  3,284.1 μs |   202.83 μs |   594.86 μs |  3,238.61 μs |  195.3125 |              14.7891 |                - |   93.7500 |   93.7500 |   810.72 KB |
-| ConcurrentSingleRequests |    887.7 μs |    19.29 μs |    53.13 μs |    890.92 μs |  140.6250 |             100.0234 |           0.0391 |   70.3125 |         - |   718.79 KB |
-| ConcurrentSmallDatasets  |  6,282.1 μs |   145.33 μs |   416.96 μs |  6,236.41 μs |  773.4375 |             123.9375 |           9.2188 |  640.6250 |  406.2500 |  5957.03 KB |
-| UpdateProduct            |    117.3 μs |     3.03 μs |     8.04 μs |    116.91 μs |    4.8828 |               2.0000 |                - |         - |         - |    21.36 KB |
+| Method                   | Mean         | Error      | StdDev       | Gen0      | Completed Work Items | Lock Contentions | Gen1      | Gen2      | Allocated   |
+|------------------------- |-------------:|-----------:|-------------:|----------:|---------------------:|-----------------:|----------:|----------:|------------:|
+| ColdStartSingleRequest   | 12,773.70 μs | 548.980 μs | 1,557.365 μs |  250.0000 |               7.0000 |           0.0313 |  125.0000 |         - |  1416.25 KB |
+| CreateProduct            |    117.49 μs |   6.025 μs |    16.289 μs |    4.8828 |               2.0000 |           0.0010 |         - |         - |    20.59 KB |
+| DeleteProduct            |           NA |         NA |           NA |        NA |                   NA |               NA |        NA |        NA |          NA |
+| GetMediumDataset         | 24,875.17 μs | 495.793 μs | 1,348.842 μs | 1500.0000 |             138.3333 |                - | 1333.3333 | 1000.0000 | 10335.15 KB |
+| GetSingleProduct         |     77.94 μs |   1.377 μs |     2.621 μs |    3.4180 |               2.0005 |           0.0010 |         - |         - |    15.09 KB |
+| GetSmallDataset          |  3,006.87 μs | 125.840 μs |   348.703 μs |  195.3125 |              16.0234 |                - |  125.0000 |   93.7500 |   821.24 KB |
+| ConcurrentSingleRequests |    816.01 μs |  16.242 μs |    41.633 μs |  144.5313 |             100.0195 |           0.0313 |   66.4063 |         - |   718.77 KB |
+| ConcurrentSmallDatasets  |  6,509.80 μs | 159.284 μs |   446.650 μs |  687.5000 |             118.4844 |           9.2344 |  500.0000 |  296.8750 |   5947.8 KB |
+| UpdateProduct            |           NA |         NA |           NA |        NA |                   NA |               NA |        NA |        NA |          NA |
+
+Benchmarks with issues:
+  ProductsControllerBenchmark.DeleteProduct: .NET 9.0(Runtime=.NET 9.0)
+  ProductsControllerBenchmark.UpdateProduct: .NET 9.0(Runtime=.NET 9.0)

@@ -6,6 +6,7 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
     public class ApiFrameworkLoadTests : IDisposable
     {
         private readonly HttpClient _httpClient;
+        private readonly string _reportBaseDir;
 
         private readonly string[] _endpoints = new[]
         {
@@ -20,10 +21,17 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
             {
                 Timeout = TimeSpan.FromSeconds(10)
             };
+
+            // Resolve absolute path inside project
+            var projectDir = AppContext.BaseDirectory;
+            var root = Path.Combine(projectDir, "..", "..", ".."); // back to project root
+            _reportBaseDir = Path.GetFullPath(Path.Combine(root, "loadtestingreports"));
+
+            Directory.CreateDirectory(_reportBaseDir); // ensure it exists
         }
 
         // =========================
-        // BASIC CAPACITY TEST (safe)
+        // BASIC CAPACITY TEST (laptop safe)
         // =========================
         public void RunBasicCapacityTest(string endpoint)
         {
@@ -41,21 +49,20 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
                 }
             })
             .WithLoadSimulations(
-                Simulation.KeepConstant(copies: 5, during: TimeSpan.FromSeconds(15)),
+                Simulation.KeepConstant(copies: 5, during: TimeSpan.FromSeconds(10)),
                 Simulation.KeepConstant(copies: 10, during: TimeSpan.FromSeconds(15)),
-                Simulation.KeepConstant(copies: 25, during: TimeSpan.FromSeconds(20)),
-                Simulation.KeepConstant(copies: 50, during: TimeSpan.FromSeconds(20))
+                Simulation.KeepConstant(copies: 20, during: TimeSpan.FromSeconds(15))
             );
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder("load_test_results_safe")
+                .WithReportFolder(Path.Combine(_reportBaseDir, "basic_capacity"))
                 .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
                 .Run();
         }
 
         // =========================
-        // SPIKE TEST (safe)
+        // SPIKE TEST (laptop safe)
         // =========================
         public void RunSpikeTest(string endpoint)
         {
@@ -74,19 +81,19 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
             })
             .WithLoadSimulations(
                 Simulation.KeepConstant(copies: 5, during: TimeSpan.FromSeconds(10)),   // baseline
-                Simulation.KeepConstant(copies: 50, during: TimeSpan.FromSeconds(10)),  // spike
+                Simulation.KeepConstant(copies: 20, during: TimeSpan.FromSeconds(10)),  // spike
                 Simulation.KeepConstant(copies: 5, during: TimeSpan.FromSeconds(10))    // recovery
             );
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder("spike_test_results_safe")
+                .WithReportFolder(Path.Combine(_reportBaseDir, "spike_test"))
                 .WithReportFormats(ReportFormat.Html)
                 .Run();
         }
 
         // =========================
-        // MIXED WORKLOAD TEST (safe)
+        // MIXED WORKLOAD TEST (laptop safe)
         // =========================
         public void RunMixedWorkloadTest(string endpoint)
         {
@@ -119,19 +126,19 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
             })
             .WithLoadSimulations(
                 Simulation.KeepConstant(copies: 10, during: TimeSpan.FromSeconds(20)),
-                Simulation.KeepConstant(copies: 25, during: TimeSpan.FromSeconds(20)),
-                Simulation.KeepConstant(copies: 50, during: TimeSpan.FromSeconds(20))
+                Simulation.KeepConstant(copies: 20, during: TimeSpan.FromSeconds(20)),
+                Simulation.KeepConstant(copies: 30, during: TimeSpan.FromSeconds(20))
             );
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder("mixed_workload_results_safe")
+                .WithReportFolder(Path.Combine(_reportBaseDir, "mixed_workload"))
                 .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
                 .Run();
         }
 
         // =========================
-        // BREAKING POINT TEST (safe)
+        // BREAKING POINT TEST (laptop safe)
         // =========================
         public void RunBreakingPointTest(string endpoint)
         {
@@ -149,15 +156,15 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
                 }
             })
             .WithLoadSimulations(
-                Simulation.Inject(rate: 5, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(15)),
-                Simulation.Inject(rate: 20, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(15)),
-                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(15)),
-                Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(15))
+                Simulation.Inject(rate: 5, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10)),
+                Simulation.Inject(rate: 15, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10)),
+                Simulation.Inject(rate: 30, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10)),
+                Simulation.Inject(rate: 50, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10))
             );
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder($"breaking_point_results_safe_{GetName(endpoint)}")
+                .WithReportFolder(Path.Combine(_reportBaseDir, $"breaking_point_{GetName(endpoint)}"))
                 .WithReportFormats(ReportFormat.Html)
                 .Run();
         }
@@ -178,83 +185,6 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
         public void Dispose()
         {
             _httpClient?.Dispose();
-        }
-    }
-
-    // =========================
-    // CONSOLE ENTRY POINT
-    // =========================
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            using var loadTester = new ApiFrameworkLoadTests();
-
-            Console.WriteLine("SAFE API Framework Load Testing (Laptop-Friendly)");
-            Console.WriteLine("================================================");
-            Console.WriteLine("Select test to run:");
-            Console.WriteLine("1. Basic Capacity Test");
-            Console.WriteLine("2. Spike Test");
-            Console.WriteLine("3. Mixed Workload Test");
-            Console.WriteLine("4. Breaking Point Test");
-            Console.Write("Enter choice (1-4): ");
-
-            var choice = Console.ReadLine();
-
-            var endpoints = new[]
-            {
-                "http://localhost:5001",
-                "http://localhost:5002",
-                "http://localhost:5003"
-            };
-
-            try
-            {
-                switch (choice)
-                {
-                    case "1":
-                        foreach (var endpoint in endpoints)
-                        {
-                            Console.WriteLine($"Running Basic Capacity Test for {endpoint}...");
-                            loadTester.RunBasicCapacityTest(endpoint);
-                        }
-                        break;
-                    case "2":
-                        foreach (var endpoint in endpoints)
-                        {
-                            Console.WriteLine($"Running Spike Test for {endpoint}...");
-                            loadTester.RunSpikeTest(endpoint);
-                        }
-                        break;
-                    case "3":
-                        foreach (var endpoint in endpoints)
-                        {
-                            Console.WriteLine($"Running Mixed Workload Test for {endpoint}...");
-                            loadTester.RunMixedWorkloadTest(endpoint);
-                        }
-                        break;
-                    case "4":
-                        foreach (var endpoint in endpoints)
-                        {
-                            Console.WriteLine($"Running Breaking Point Test for {endpoint}...");
-                            loadTester.RunBreakingPointTest(endpoint);
-                        }
-                        break;
-                    default:
-                        Console.WriteLine("Invalid choice. Running Basic Capacity Test on Controllers...");
-                        loadTester.RunBasicCapacityTest(endpoints[0]);
-                        break;
-                }
-
-                Console.WriteLine("✅ Load test completed! Check the report folders (ending in _safe) for results.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"⚠️ Error running load test: {ex.Message}");
-            }
-
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
     }
 }
