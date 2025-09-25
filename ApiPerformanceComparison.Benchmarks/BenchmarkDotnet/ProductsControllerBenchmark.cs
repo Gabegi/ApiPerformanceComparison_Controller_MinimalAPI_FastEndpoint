@@ -22,6 +22,9 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         private const int MEDIUM_DATASET = 10_000;
         private const int CONCURRENT_REQUESTS = 50;
 
+        private readonly List<int> _idsToUpdate = new();
+        private readonly List<int> _idsToDelete = new();
+
         // ================================================================
         // FACTORY HELPER
         // ================================================================
@@ -44,17 +47,16 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         // GLOBAL SETUP
         // ================================================================
         [GlobalSetup]
-        public void Setup()
+        public async Task Setup()
         {
             _factory = CreateFactory<Controllers.ProductsController>(MEDIUM_DATASET + 100);
             _client = _factory.CreateClient();
 
-            WarmupAsync().GetAwaiter().GetResult();
+            await WarmupAsync();
         }
 
         private async Task WarmupAsync()
         {
-            // Warmup a few requests to stabilize JIT/first-call effects
             for (int i = 0; i < 3; i++)
             {
                 var response = await _client!.GetAsync("/products/1");
@@ -114,42 +116,82 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             response.Dispose();
         }
 
+        // ---------- Update ----------
+        [GlobalSetup(Target = nameof(UpdateProduct))]
+        public async Task SetupUpdateProducts()
+        {
+            _idsToUpdate.Clear();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var req = new CreateProductCall
+                {
+                    Name = $"PreUpdate {_random.Next()}",
+                    Price = (decimal)_random.NextDouble() * 100
+                };
+
+                var response = await _client!.PostAsJsonAsync("/products", req);
+                response.EnsureSuccessStatusCode();
+
+                var created = await response.Content.ReadFromJsonAsync<Product>();
+                if (created != null) _idsToUpdate.Add(created.Id);
+
+                response.Dispose();
+            }
+        }
+
         [Benchmark]
         [BenchmarkCategory("UpdateOperation")]
         public async Task UpdateProduct()
         {
-            var productId = _random.Next(1, 100); // valid seeded range
+            var id = _idsToUpdate[_random.Next(_idsToUpdate.Count)];
+
             var req = new UpdateProductCall
             {
                 Name = $"Updated Product {_random.Next()}",
                 Price = (decimal)_random.NextDouble() * 100
             };
 
-            var response = await _client!.PutAsJsonAsync($"/products/{productId}", req);
+            var response = await _client!.PutAsJsonAsync($"/products/{id}", req);
             response.EnsureSuccessStatusCode();
             response.Dispose();
+        }
+
+        // ---------- Delete ----------
+        [GlobalSetup(Target = nameof(DeleteProduct))]
+        public async Task SetupDeleteProducts()
+        {
+            _idsToDelete.Clear();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                var req = new CreateProductCall
+                {
+                    Name = $"ToDelete {_random.Next()}",
+                    Price = (decimal)_random.NextDouble() * 100
+                };
+
+                var response = await _client!.PostAsJsonAsync("/products", req);
+                response.EnsureSuccessStatusCode();
+
+                var created = await response.Content.ReadFromJsonAsync<Product>();
+                if (created != null) _idsToDelete.Add(created.Id);
+
+                response.Dispose();
+            }
         }
 
         [Benchmark]
         [BenchmarkCategory("DeleteOperation")]
         public async Task DeleteProduct()
         {
-            // Create product first
-            var req = new CreateProductCall
-            {
-                Name = $"ToDelete {_random.Next()}",
-                Price = (decimal)_random.NextDouble() * 100
-            };
+            if (_idsToDelete.Count == 0) return;
 
-            var createResponse = await _client!.PostAsJsonAsync("/products", req);
-            createResponse.EnsureSuccessStatusCode();
-            var created = await createResponse.Content.ReadFromJsonAsync<Product>();
-            createResponse.Dispose();
+            var id = _idsToDelete[_random.Next(_idsToDelete.Count)];
 
-            // Then delete it
-            var deleteResponse = await _client.DeleteAsync($"/products/{created!.Id}");
-            deleteResponse.EnsureSuccessStatusCode();
-            deleteResponse.Dispose();
+            var response = await _client!.DeleteAsync($"/products/{id}");
+            response.EnsureSuccessStatusCode();
+            response.Dispose();
         }
 
         // ================================================================

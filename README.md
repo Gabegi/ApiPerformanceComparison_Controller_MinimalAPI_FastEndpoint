@@ -1294,3 +1294,52 @@ Controllers → balanced, predictable, good for dataset-heavy apps.
 FastEndpoints → competitive under load, slightly higher allocations.
 
 Practical guidance: which to choose depending on product type.
+
+# How to run NBombmer, load tests?
+How to run your load testing project
+
+Make sure you have your APIs running:
+
+Controllers → http://localhost:5001
+
+Minimal API → http://localhost:5002
+
+FastEndpoints → http://localhost:5003
+
+Go to your load test project folder (where you put ApiFrameworkLoadTests).
+
+cd path/to/ApiPerformanceComparison.LoadTests
+
+
+Run it with dotnet run:
+
+dotnet run
+
+
+You’ll see the prompt:
+
+SAFE API Framework Load Testing (Laptop-Friendly)
+=================================================
+Select test to run:
+1. Basic Capacity Test
+2. Spike Test
+3. Mixed Workload Test
+4. Breaking Point Test
+Enter choice (1-4):
+
+
+Enter 1, 2, 3, or 4 depending on the test you want.
+
+After it finishes, check the results:
+
+Reports are generated in folders like:
+
+load_test_results_safe/
+
+spike_test_results_safe/
+
+mixed_workload_results_safe/
+
+breaking_point_results_safe_*
+
+You’ll find both HTML reports and CSV files.
