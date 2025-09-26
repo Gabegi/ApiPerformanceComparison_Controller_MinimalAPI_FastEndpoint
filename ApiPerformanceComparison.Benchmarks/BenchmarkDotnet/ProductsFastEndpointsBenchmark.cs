@@ -183,16 +183,26 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
 
         [Benchmark]
         [BenchmarkCategory("DeleteOperation")]
-        public async Task DeleteProduct()
+        public async Task<bool> DeleteProduct()
         {
-            if (_idsToDelete.Count == 0) return;
+            if (_idsToDelete.Count == 0)
+                throw new InvalidOperationException("No products available to delete.");
 
-            var id = _idsToDelete[_random.Next(_idsToDelete.Count)];
+            int index = _random.Next(_idsToDelete.Count);
+            int id = _idsToDelete[index];
 
             var response = await _client!.DeleteAsync($"/products/{id}");
-            response.EnsureSuccessStatusCode();
+            bool success = response.IsSuccessStatusCode;
             response.Dispose();
+
+            if (success)
+            {
+                _idsToDelete.RemoveAt(index);
+            }
+
+            return success;
         }
+
 
         // ================================================================
         // CONCURRENCY / THROUGHPUT
