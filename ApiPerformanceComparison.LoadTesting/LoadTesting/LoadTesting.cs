@@ -7,14 +7,6 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
     {
         private readonly HttpClient _httpClient;
         private readonly string _reportBaseDir;
-
-        private readonly string[] _endpoints = new[]
-        {
-            "http://localhost:5001", // Controllers
-            "http://localhost:5002", // Minimal API
-            "http://localhost:5003"  // FastEndpoints
-        };
-
         public ApiFrameworkLoadTests()
         {
             _httpClient = new HttpClient

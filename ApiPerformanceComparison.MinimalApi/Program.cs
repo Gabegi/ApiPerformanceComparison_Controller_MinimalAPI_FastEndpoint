@@ -1,5 +1,4 @@
 ﻿using ApiPerformanceComparison.Shared;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Concurrent;
 
 var builder = WebApplication.CreateBuilder(args);

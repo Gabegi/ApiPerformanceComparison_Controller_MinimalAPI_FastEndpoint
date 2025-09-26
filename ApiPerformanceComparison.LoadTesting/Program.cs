@@ -15,6 +15,15 @@ public class Program
 
         Console.WriteLine("API Framework Load Testing (Laptop-Friendly)");
         Console.WriteLine("================================================");
+        Console.WriteLine("Enter 1 to start load testing, or any other key to exit:");
+
+        var input = Console.ReadLine();
+
+        if (input != "1")
+        {
+            Console.WriteLine("❌ Exiting without running tests...");
+            return;
+        }
 
         try
         {
