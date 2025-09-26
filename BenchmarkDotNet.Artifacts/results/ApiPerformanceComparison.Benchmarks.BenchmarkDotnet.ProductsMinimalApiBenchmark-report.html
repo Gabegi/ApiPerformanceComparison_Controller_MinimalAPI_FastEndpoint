@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsMinimalApiBenchmark-20250925-204515</title>
+<title>ApiPerformanceComparison.Benchmarks.BenchmarkDotnet.ProductsMinimalApiBenchmark-20250925-225155</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -23,16 +23,16 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 </code></pre>
 
 <table>
-<thead><tr><th>Method            </th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+<thead><tr><th>Method            </th><th>Mean  </th><th>Error </th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>ColdStartSingleRequest</td><td>11,167.86 &mu;s</td><td>223.030 &mu;s</td><td>378.722 &mu;s</td><td>11,109.82 &mu;s</td><td>156.2500</td><td>7.0000</td><td>-</td><td>125.0000</td><td>-</td><td>902.6 KB</td>
-</tr><tr><td>CreateProduct</td><td>38.12 &mu;s</td><td>0.883 &mu;s</td><td>2.433 &mu;s</td><td>37.94 &mu;s</td><td>3.4180</td><td>2.0005</td><td>0.0010</td><td>0.4883</td><td>-</td><td>14.55 KB</td>
+</thead><tbody><tr><td>ColdStartSingleRequest</td><td>13,259.24 &mu;s</td><td>818.935 &mu;s</td><td>2,214.04 &mu;s</td><td>12,593.92 &mu;s</td><td>156.2500</td><td>7.0000</td><td>-</td><td>93.7500</td><td>-</td><td>903.35 KB</td>
+</tr><tr><td>CreateProduct</td><td>307.20 &mu;s</td><td>53.012 &mu;s</td><td>156.31 &mu;s</td><td>329.54 &mu;s</td><td>3.4180</td><td>2.0010</td><td>0.0020</td><td>0.4883</td><td>-</td><td>14.56 KB</td>
 </tr><tr><td>DeleteProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
-</tr><tr><td>GetMediumDataset</td><td>20,645.38 &mu;s</td><td>187.425 &mu;s</td><td>175.317 &mu;s</td><td>20,621.77 &mu;s</td><td>1468.7500</td><td>140.3438</td><td>-</td><td>1437.5000</td><td>1000.0000</td><td>10256.98 KB</td>
-</tr><tr><td>GetSingleProduct</td><td>24.89 &mu;s</td><td>0.881 &mu;s</td><td>2.398 &mu;s</td><td>24.12 &mu;s</td><td>2.6855</td><td>2.0000</td><td>0.0002</td><td>-</td><td>-</td><td>11.27 KB</td>
-</tr><tr><td>GetSmallDataset</td><td>3,219.54 &mu;s</td><td>102.167 &mu;s</td><td>291.488 &mu;s</td><td>3,134.09 &mu;s</td><td>125.0000</td><td>14.6953</td><td>-</td><td>109.3750</td><td>109.3750</td><td>801.02 KB</td>
-</tr><tr><td>ConcurrentSingleRequests</td><td>670.51 &mu;s</td><td>8.504 &mu;s</td><td>11.352 &mu;s</td><td>672.04 &mu;s</td><td>109.3750</td><td>100.1211</td><td>0.0078</td><td>46.8750</td><td>-</td><td>530.99 KB</td>
-</tr><tr><td>ConcurrentSmallDatasets</td><td>5,785.11 &mu;s</td><td>37.044 &mu;s</td><td>45.493 &mu;s</td><td>5,770.21 &mu;s</td><td>851.5625</td><td>132.3672</td><td>8.7969</td><td>835.9375</td><td>531.2500</td><td>5824.07 KB</td>
+</tr><tr><td>GetMediumDataset</td><td>31,265.59 &mu;s</td><td>4,399.349 &mu;s</td><td>11,968.75 &mu;s</td><td>28,115.76 &mu;s</td><td>1333.3333</td><td>123.8333</td><td>-</td><td>1166.6667</td><td>1000.0000</td><td>10029.1 KB</td>
+</tr><tr><td>GetSingleProduct</td><td>66.31 &mu;s</td><td>6.793 &mu;s</td><td>18.60 &mu;s</td><td>64.91 &mu;s</td><td>2.6855</td><td>2.0000</td><td>0.0164</td><td>-</td><td>-</td><td>11.32 KB</td>
+</tr><tr><td>GetSmallDataset</td><td>2,455.35 &mu;s</td><td>62.987 &mu;s</td><td>179.70 &mu;s</td><td>2,386.49 &mu;s</td><td>195.3125</td><td>15.6797</td><td>-</td><td>101.5625</td><td>101.5625</td><td>817.49 KB</td>
+</tr><tr><td>ConcurrentSingleRequests</td><td>1,971.01 &mu;s</td><td>95.897 &mu;s</td><td>257.62 &mu;s</td><td>1,900.07 &mu;s</td><td>109.3750</td><td>100.4219</td><td>0.0156</td><td>31.2500</td><td>-</td><td>531.31 KB</td>
+</tr><tr><td>ConcurrentSmallDatasets</td><td>23,173.12 &mu;s</td><td>1,330.170 &mu;s</td><td>3,880.17 &mu;s</td><td>21,829.93 &mu;s</td><td>875.0000</td><td>132.7500</td><td>9.2813</td><td>687.5000</td><td>500.0000</td><td>5859.57 KB</td>
 </tr><tr><td>UpdateProduct</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td>
 </tr></tbody></table>
 </body>

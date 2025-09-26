@@ -25,9 +25,13 @@ app.MapGet("/products/{id:int}", (int id, ConcurrentDictionary<int, Product> pro
         ? Results.Ok(product)
         : Results.NotFound());
 
-// List products (force materialization for serializer)
 app.MapGet("/products/list", (int count, ConcurrentDictionary<int, Product> products) =>
-    Results.Ok(products.Values.Take(count)));
+{
+    var result = products.Values.Take(count).ToList();
+    return Results.Ok(result);
+});
+
+
 
 // Create
 app.MapPost("/products", (Product product, ConcurrentDictionary<int, Product> products, AtomicCounter counter) =>

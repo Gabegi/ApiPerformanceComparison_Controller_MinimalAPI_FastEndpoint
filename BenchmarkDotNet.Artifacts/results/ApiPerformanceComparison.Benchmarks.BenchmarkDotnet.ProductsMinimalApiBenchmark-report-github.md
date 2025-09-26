@@ -9,17 +9,17 @@ Intel Core i7-8650U CPU 1.90GHz (Max: 2.11GHz) (Kaby Lake R), 1 CPU, 8 logical a
 Job=.NET 9.0  Runtime=.NET 9.0  
 
 ```
-| Method                   | Mean         | Error      | StdDev     | Median       | Gen0      | Completed Work Items | Lock Contentions | Gen1      | Gen2      | Allocated   |
-|------------------------- |-------------:|-----------:|-----------:|-------------:|----------:|---------------------:|-----------------:|----------:|----------:|------------:|
-| ColdStartSingleRequest   | 11,167.86 μs | 223.030 μs | 378.722 μs | 11,109.82 μs |  156.2500 |               7.0000 |                - |  125.0000 |         - |    902.6 KB |
-| CreateProduct            |     38.12 μs |   0.883 μs |   2.433 μs |     37.94 μs |    3.4180 |               2.0005 |           0.0010 |    0.4883 |         - |    14.55 KB |
-| DeleteProduct            |           NA |         NA |         NA |           NA |        NA |                   NA |               NA |        NA |        NA |          NA |
-| GetMediumDataset         | 20,645.38 μs | 187.425 μs | 175.317 μs | 20,621.77 μs | 1468.7500 |             140.3438 |                - | 1437.5000 | 1000.0000 | 10256.98 KB |
-| GetSingleProduct         |     24.89 μs |   0.881 μs |   2.398 μs |     24.12 μs |    2.6855 |               2.0000 |           0.0002 |         - |         - |    11.27 KB |
-| GetSmallDataset          |  3,219.54 μs | 102.167 μs | 291.488 μs |  3,134.09 μs |  125.0000 |              14.6953 |                - |  109.3750 |  109.3750 |   801.02 KB |
-| ConcurrentSingleRequests |    670.51 μs |   8.504 μs |  11.352 μs |    672.04 μs |  109.3750 |             100.1211 |           0.0078 |   46.8750 |         - |   530.99 KB |
-| ConcurrentSmallDatasets  |  5,785.11 μs |  37.044 μs |  45.493 μs |  5,770.21 μs |  851.5625 |             132.3672 |           8.7969 |  835.9375 |  531.2500 |  5824.07 KB |
-| UpdateProduct            |           NA |         NA |         NA |           NA |        NA |                   NA |               NA |        NA |        NA |          NA |
+| Method                   | Mean         | Error        | StdDev       | Median       | Gen0      | Completed Work Items | Lock Contentions | Gen1      | Gen2      | Allocated  |
+|------------------------- |-------------:|-------------:|-------------:|-------------:|----------:|---------------------:|-----------------:|----------:|----------:|-----------:|
+| ColdStartSingleRequest   | 13,259.24 μs |   818.935 μs |  2,214.04 μs | 12,593.92 μs |  156.2500 |               7.0000 |                - |   93.7500 |         - |  903.35 KB |
+| CreateProduct            |    307.20 μs |    53.012 μs |    156.31 μs |    329.54 μs |    3.4180 |               2.0010 |           0.0020 |    0.4883 |         - |   14.56 KB |
+| DeleteProduct            |           NA |           NA |           NA |           NA |        NA |                   NA |               NA |        NA |        NA |         NA |
+| GetMediumDataset         | 31,265.59 μs | 4,399.349 μs | 11,968.75 μs | 28,115.76 μs | 1333.3333 |             123.8333 |                - | 1166.6667 | 1000.0000 | 10029.1 KB |
+| GetSingleProduct         |     66.31 μs |     6.793 μs |     18.60 μs |     64.91 μs |    2.6855 |               2.0000 |           0.0164 |         - |         - |   11.32 KB |
+| GetSmallDataset          |  2,455.35 μs |    62.987 μs |    179.70 μs |  2,386.49 μs |  195.3125 |              15.6797 |                - |  101.5625 |  101.5625 |  817.49 KB |
+| ConcurrentSingleRequests |  1,971.01 μs |    95.897 μs |    257.62 μs |  1,900.07 μs |  109.3750 |             100.4219 |           0.0156 |   31.2500 |         - |  531.31 KB |
+| ConcurrentSmallDatasets  | 23,173.12 μs | 1,330.170 μs |  3,880.17 μs | 21,829.93 μs |  875.0000 |             132.7500 |           9.2813 |  687.5000 |  500.0000 | 5859.57 KB |
+| UpdateProduct            |           NA |           NA |           NA |           NA |        NA |                   NA |               NA |        NA |        NA |         NA |
 
 Benchmarks with issues:
   ProductsMinimalApiBenchmark.DeleteProduct: .NET 9.0(Runtime=.NET 9.0)

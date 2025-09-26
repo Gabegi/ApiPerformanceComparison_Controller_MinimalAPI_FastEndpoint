@@ -47,12 +47,15 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
         // GLOBAL SETUP
         // ================================================================
         [GlobalSetup]
-        public async Task Setup()
+        public void Setup()
         {
-            _factory = CreateFactory<Controllers.ProductsController>(MEDIUM_DATASET + 100);
+            _factory = CreateFactory<Controllers.ProductsController>(MEDIUM_DATASET + 2000);
             _client = _factory.CreateClient();
 
-            await WarmupAsync();
+            // Synchronously wait to ensure async setup completes
+            WarmupAsync().GetAwaiter().GetResult();
+            SeedUpdateProducts().GetAwaiter().GetResult();
+            SeedDeleteProducts().GetAwaiter().GetResult();
         }
 
         private async Task WarmupAsync()
@@ -60,6 +63,42 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             for (int i = 0; i < 3; i++)
             {
                 var response = await _client!.GetAsync("/products/1");
+                response.Dispose();
+            }
+        }
+
+        private async Task SeedUpdateProducts()
+        {
+            _idsToUpdate.Clear();
+            for (int i = 0; i < 1000; i++)
+            {
+                var req = new CreateProductCall
+                {
+                    Name = $"PreUpdate {_random.Next()}",
+                    Price = (decimal)_random.NextDouble() * 100
+                };
+
+                var response = await _client!.PostAsJsonAsync("/products", req);
+                var created = await response.Content.ReadFromJsonAsync<Product>();
+                if (created != null) _idsToUpdate.Add(created.Id);
+                response.Dispose();
+            }
+        }
+
+        private async Task SeedDeleteProducts()
+        {
+            _idsToDelete.Clear();
+            for (int i = 0; i < 1000; i++)
+            {
+                var req = new CreateProductCall
+                {
+                    Name = $"ToDelete {_random.Next()}",
+                    Price = (decimal)_random.NextDouble() * 100
+                };
+
+                var response = await _client!.PostAsJsonAsync("/products", req);
+                var created = await response.Content.ReadFromJsonAsync<Product>();
+                if (created != null) _idsToDelete.Add(created.Id);
                 response.Dispose();
             }
         }
@@ -116,36 +155,11 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             response.Dispose();
         }
 
-        // ---------- Update ----------
-        [GlobalSetup(Target = nameof(UpdateProduct))]
-        public async Task SetupUpdateProducts()
-        {
-            _idsToUpdate.Clear();
-
-            for (int i = 0; i < 1000; i++)
-            {
-                var req = new CreateProductCall
-                {
-                    Name = $"PreUpdate {_random.Next()}",
-                    Price = (decimal)_random.NextDouble() * 100
-                };
-
-                var response = await _client!.PostAsJsonAsync("/products", req);
-                response.EnsureSuccessStatusCode();
-
-                var created = await response.Content.ReadFromJsonAsync<Product>();
-                if (created != null) _idsToUpdate.Add(created.Id);
-
-                response.Dispose();
-            }
-        }
-
         [Benchmark]
         [BenchmarkCategory("UpdateOperation")]
         public async Task UpdateProduct()
         {
             var id = _idsToUpdate[_random.Next(_idsToUpdate.Count)];
-
             var req = new UpdateProductCall
             {
                 Name = $"Updated Product {_random.Next()}",
@@ -157,42 +171,27 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
             response.Dispose();
         }
 
-        // ---------- Delete ----------
-        [GlobalSetup(Target = nameof(DeleteProduct))]
-        public async Task SetupDeleteProducts()
-        {
-            _idsToDelete.Clear();
-
-            for (int i = 0; i < 1000; i++)
-            {
-                var req = new CreateProductCall
-                {
-                    Name = $"ToDelete {_random.Next()}",
-                    Price = (decimal)_random.NextDouble() * 100
-                };
-
-                var response = await _client!.PostAsJsonAsync("/products", req);
-                response.EnsureSuccessStatusCode();
-
-                var created = await response.Content.ReadFromJsonAsync<Product>();
-                if (created != null) _idsToDelete.Add(created.Id);
-
-                response.Dispose();
-            }
-        }
-
         [Benchmark]
         [BenchmarkCategory("DeleteOperation")]
-        public async Task DeleteProduct()
+        public async Task<bool> DeleteProduct()
         {
-            if (_idsToDelete.Count == 0) return;
+            if (_idsToDelete.Count == 0)
+                throw new InvalidOperationException("No products available to delete.");
 
-            var id = _idsToDelete[_random.Next(_idsToDelete.Count)];
+            int index = _random.Next(_idsToDelete.Count);
+            int id = _idsToDelete[index];
 
             var response = await _client!.DeleteAsync($"/products/{id}");
-            response.EnsureSuccessStatusCode();
+            bool success = response.IsSuccessStatusCode;
             response.Dispose();
+            if (success)
+            {
+                _idsToDelete.RemoveAt(index);
+            }
+            return success;
         }
+
+
 
         // ================================================================
         // CONCURRENCY / THROUGHPUT
@@ -209,7 +208,6 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                 });
 
             var responses = await Task.WhenAll(tasks);
-
             foreach (var response in responses)
             {
                 response.EnsureSuccessStatusCode();
@@ -225,7 +223,6 @@ namespace ApiPerformanceComparison.Benchmarks.BenchmarkDotnet
                 .Select(_ => _client!.GetAsync($"/products/list?count={SMALL_DATASET}"));
 
             var responses = await Task.WhenAll(tasks);
-
             foreach (var response in responses)
             {
                 response.EnsureSuccessStatusCode();
