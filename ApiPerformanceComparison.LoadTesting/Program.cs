@@ -8,22 +8,15 @@ public class Program
 
         var endpoints = new[]
         {
-            "http://localhost:5001", // Controllers
-            "http://localhost:5002", // Minimal API
-            "http://localhost:5003"  // FastEndpoints
+            Environment.GetEnvironmentVariable("CTRL_URL") ?? "http://localhost:5161",
+            Environment.GetEnvironmentVariable("MIN_URL") ?? "http://localhost:5288",
+            Environment.GetEnvironmentVariable("FAST_URL") ?? "http://localhost:5028"
         };
 
         Console.WriteLine("API Framework Load Testing (Laptop-Friendly)");
         Console.WriteLine("================================================");
-        Console.WriteLine("Enter 1 to start load testing, or any other key to exit:");
-
-        var input = Console.ReadLine();
-
-        if (input != "1")
-        {
-            Console.WriteLine("❌ Exiting without running tests...");
-            return;
-        }
+        Console.WriteLine("Starting load testing in 1 second... (set CTRL_URL/MIN_URL/FAST_URL to override)");
+        Thread.Sleep(1000);
 
         try
         {

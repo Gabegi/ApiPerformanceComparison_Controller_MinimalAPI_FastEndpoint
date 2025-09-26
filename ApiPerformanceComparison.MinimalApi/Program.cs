@@ -18,6 +18,24 @@ builder.Services.AddSingleton(sp =>
 
 var app = builder.Build();
 
+
+// ============================
+// Seed products here for load testing 👇
+// ============================
+var products = app.Services.GetRequiredService<ConcurrentDictionary<int, Product>>();
+var counter = app.Services.GetRequiredService<AtomicCounter>();
+
+for (int i = 1; i <= 1000; i++)
+{
+    products[i] = new Product
+    {
+        Id = counter.GetNext(),
+        Name = $"Product {i}",
+        Price = i * 1.5m
+    };
+}
+// ============================
+
 // Get single product
 app.MapGet("/products/{id:int}", (int id, ConcurrentDictionary<int, Product> products) =>
     products.TryGetValue(id, out var product)
