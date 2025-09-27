@@ -1,0 +1,11 @@
+2025-09-27 12:19:14.580 +07:00 [INF] [ThreadId:1] NBomber 6.1.1 started a new session: 2025-09-27_05.19.34_session_fbf6de2e
+2025-09-27 12:19:14.648 +07:00 [INF] [ThreadId:1] NBomber started as single node
+2025-09-27 12:19:14.651 +07:00 [INF] [ThreadId:1] License validation....
+2025-09-27 12:19:14.652 +07:00 [WRN] [ThreadId:1] THIS VERSION IS FREE ONLY FOR PERSONAL USE. You can't use it for an organization.
+2025-09-27 12:19:14.775 +07:00 [INF] [ThreadId:1] Reports folder: C:\Users\lelyg\Desktop\code\ApiPerformanceComparison_Controller_MinimalAPI_FastEndpoint\ApiPerformanceComparison.LoadTesting\loadtestingreports\basic_capacity
+2025-09-27 12:19:14.776 +07:00 [INF] [ThreadId:1] Plugins: no plugins were loaded
+2025-09-27 12:19:14.777 +07:00 [INF] [ThreadId:1] Reporting sinks: no reporting sinks were loaded
+2025-09-27 12:19:14.777 +07:00 [INF] [ThreadId:1] Starting init...
+2025-09-27 12:19:14.804 +07:00 [INF] [ThreadId:1] Target scenarios: basic_capacity_localhost_5161
+2025-09-27 12:19:14.812 +07:00 [INF] [ThreadId:1] Init finished
+2025-09-27 12:19:14.873 +07:00 [INF] [ThreadId:1] Starting bombing...

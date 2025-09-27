@@ -1,4 +1,5 @@
-﻿using ApiPerformanceComparison.LoadTesting.LoadTesting;
+﻿using ApiPerformanceComparison.LoadTesting;
+using ApiPerformanceComparison.LoadTesting.LoadTesting;
 
 public class Program
 {
@@ -15,6 +16,16 @@ public class Program
 
         Console.WriteLine("API Framework Load Testing (Laptop-Friendly)");
         Console.WriteLine("================================================");
+        Console.WriteLine("Enter '1' to start the load tests...");
+
+        // 🔑 Wait until user types "1"
+        var input = Console.ReadLine();
+        if (input != "1")
+        {
+            Console.WriteLine("❌ Invalid input. Exiting...");
+            return;
+        }
+
         Console.WriteLine("Starting load testing in 1 second... (set CTRL_URL/MIN_URL/FAST_URL to override)");
         Thread.Sleep(1000);
 
