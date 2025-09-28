@@ -1,7 +1,3 @@
-
-
-
-
     # ApiPerformanceComparison_Controller_MinimalAPI_FastEndpoint
 
     # Goals
@@ -209,91 +205,6 @@ These benchmarks help compare frameworks not only for raw response speed, but al
     └── reports/
     ```
 
-    # Results
-
-    ```
-    | Method                      | Mean          | Error        | StdDev       | Median        | Min           | Max           | Ratio    | RatioSD | Rank | Gen0      | Completed Work Items | Lock Contentions | Gen1      | Allocated   | Alloc Ratio |
-    |---------------------------- |--------------:|-------------:|-------------:|--------------:|--------------:|--------------:|---------:|--------:|-----:|----------:|---------------------:|-----------------:|----------:|------------:|------------:|
-    | Controller_GetSingleProduct |      89.66 us |     8.285 us |    23.369 us |      83.21 us |      66.11 us |     156.87 us |     1.06 |    0.36 |    2 |    3.4180 |               2.0010 |           0.0015 |         - |    15.08 KB |        1.00 |
-    | Controller_Get5kProducts    |   8,606.71 us |   221.200 us |   638.213 us |   8,452.29 us |   7,812.98 us |  10,382.69 us |   101.48 |   23.04 |    4 |  250.0000 |              14.1094 |           0.0156 |  171.8750 |  1405.02 KB |       93.19 |
-    | Controller_Get50kProducts   |  92,747.90 us | 1,837.818 us | 2,861.262 us |  92,874.38 us |  87,737.30 us |  99,713.27 us | 1,093.54 |  236.64 |    5 | 2000.0000 |             112.6667 |                - | 1000.0000 | 13601.14 KB |      902.10 |
-    | Controller_Get100kProducts  | 174,667.87 us | 3,442.675 us | 6,029.568 us | 173,945.60 us | 162,790.60 us | 192,053.70 us | 2,059.41 |  446.83 |    6 | 4000.0000 |             220.0000 |                - | 2000.0000 | 27181.12 KB |    1,802.80 |
-    | MinimalApi_GetSingleProduct |      40.44 us |     3.195 us |     9.168 us |      39.79 us |      23.48 us |      66.70 us |     0.48 |    0.15 |    1 |    2.6855 |               2.0005 |           0.0029 |         - |    11.25 KB |        0.75 |
-    | MinimalApi_Get5kProducts    |   7,780.80 us |   153.442 us |   143.530 us |   7,783.10 us |   7,562.13 us |   8,041.79 us |    91.74 |   19.72 |    3 |  250.0000 |              14.9766 |                - |  179.6875 |  1400.53 KB |       92.89 |
-    | MinimalApi_Get50kProducts   |  95,422.82 us | 2,500.818 us | 7,012.563 us |  93,619.10 us |  81,321.60 us | 114,671.47 us | 1,125.08 |  255.17 |    5 | 2000.0000 |             117.6667 |           0.3333 | 1000.0000 | 13597.82 KB |      901.88 |
-    | MinimalApi_Get100kProducts  | 172,360.34 us | 3,399.614 us | 8,145.258 us | 171,476.40 us | 155,624.10 us | 195,931.50 us | 2,032.20 |  445.96 |    6 | 4000.0000 |             274.0000 |                - | 2000.0000 | 27198.84 KB |    1,803.98 |
-
-    ```
-
-    ## 1
-
-    our table compares Controller endpoints vs Minimal API endpoints, with different payload sizes (SingleProduct, 5k, 50k, 100k). The metrics in your BenchmarkDotNet table can be grouped into categories.
-
-    1. ⏱ Latency
-
-    Mean: Average execution time per request.
-
-    Median: Middle value, less sensitive to outliers.
-
-    StdDev / Error: Variability between runs.
-
-    Min / Max: Best and worst cases observed.
-
-    From your table:
-
-    Minimal API is consistently faster than Controller for small payloads (SingleProduct).
-
-    For larger payloads (5k+), both converge and differences are smaller (network/serialization dominates).
-
-    2. 🚀 Throughput (Requests/sec)
-
-    We can compute requests/sec as:
-
-    Throughput=
-    MeanTimeSeconds
-    1
-    ​
-
-    Example:
-
-    Controller_GetSingleProduct: 89.66 µs ≈ 0.00008966 s → ~11,160 requests/sec
-
-    MinimalApi_GetSingleProduct: 40.44 µs ≈ 0.00004044 s → ~24,740 requests/sec
-
-    This shows Minimal API nearly doubles throughput for small calls.
-
-    For larger sets (100k products), throughput drops drastically (~5–6 req/sec).
-
-    3. 📉 Latency Distribution (P95, P99)
-
-    BenchmarkDotNet doesn’t output P95/P99 directly, but you can approximate from Mean + StdDev.
-    For normally distributed results:
-
-    P95 ≈ Mean + 2 × StdDev
-
-    P99 ≈ Mean + 3 × StdDev
-
-    Example:
-
-    MinimalApi_Get5kProducts: Mean 7,780 µs, StdDev 143 µs
-
-    P95 ≈ 7,780 + 286 = 8,066 µs
-
-    P99 ≈ 7,780 + 429 = 8,209 µs
-
-    That gives you an approximation of tail latency.
-
-    4. 💾 Memory Allocation per Request
-
-    From Allocated column:
-
-    Controller_GetSingleProduct: 15.08 KB
-
-    MinimalApi_GetSingleProduct: 11.25 KB
-
-    For larger payloads (100k products), both allocate ~27 MB/request.
-    → Allocation scales linearly with payload size, minimal differences between API styles.
-
 # Why having all tests in one class?
 
 Moving from "3 separate test classes" to "1 unified comparison class" is the biggest improvement. This ensures all frameworks are tested:
@@ -343,56 +254,6 @@ Academic/research comparisons
 
 We don't have any async operations so we removed the async/await
 
-# List vs dictionary for seed data
-
-1️⃣ Dictionary (Dictionary<int, Product>)
-
-Pros:
-
-O(1) lookups by ID → GET /products/{id}, PUT, DELETE are very fast, even with 10k+ items.
-
-Deleting and updating by key is also O(1).
-
-Thread-safe reads if you only read (though writes still need attention in multi-threaded scenarios).
-
-Cons:
-
-Uses more memory than a List because it stores internal buckets for hashing.
-
-Iteration order is not guaranteed (though Values.Take(count) works fine).
-
-Use case: Perfect for APIs where you often look up by id or modify items by id. This is exactly your scenario.
-
-2️⃣ List (List<Product>)
-
-Pros:
-
-Simpler memory model, less overhead.
-
-Iteration is straightforward and ordered.
-
-Cons:
-
-Lookup by ID is O(n) → GET /products/{id} requires a linear search.
-
-Delete and update by ID also O(n) because you have to find the index first.
-
-For small datasets (<1k items), this is okay; for large datasets, it will slow down significantly under concurrent requests.
-
-Use case: Fine if you mostly return all products or small subsets, and don’t often need id-based operations.
-
-✅ Recommendation for your API
-
-Since your API exposes:
-
-GET /products/{id}
-
-PUT /products/{id}
-
-DELETE /products/{id}
-
-…and you have 10k+ products, you definitely want Dictionary<int, Product>. Otherwise every single request by ID will loop through thousands of items — not great for performance.
-
 # Performance issues
 
 Here’s the catch:
@@ -400,6 +261,7 @@ Here’s the catch:
 System.Text.Json doesn’t stream IEnumerable<T> by default — it buffers the entire enumeration into a List<T> before serializing.
 
 # seeding
+
 That means: don’t seed inside the API project, only register empty singletons that the benchmark harness can override with different datasets.
 
 # 🖥️ Test Environment
@@ -413,6 +275,7 @@ OS: Windows 11 (24H2)
 So this is a laptop-class CPU, not a high-throughput server CPU, which makes latency/GC overhead more visible.
 
 # Tolist()
+
 Great question 👌 — this comes down to how ASP.NET Core serializes responses and what happens when you give it a lazy IEnumerable<T> instead of a materialized collection like List<T>.
 
 🔍 What happens without .ToList()
@@ -421,11 +284,9 @@ When you do:
 
 return Results.Ok(products.Values.Take(count));
 
-
 or in FastEndpoints:
 
 await SendOkAsync(products.Values.Take(count));
-
 
 You are giving the framework a lazy iterator (System.Linq.Enumerable+TakeIterator):
 
@@ -454,7 +315,6 @@ When you do:
 
 var result = products.Values.Take(count).ToList();
 return Results.Ok(result);
-
 
 You force immediate evaluation of the query:
 
@@ -502,7 +362,7 @@ Minimal API doesn’t, unless you configure it.
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 
 # 4. Pipeline differences
@@ -512,6 +372,7 @@ Minimal API doesn’t add filters, formatters, or MVC abstractions — which is 
 But in real-world benchmarks, the cost of serialization + data structure access dominates, making Minimal API look worse if those aren’t optimized.
 
 # [ApiController] Optimizations
+
 The [ApiController] attribute in ASP.NET Core provides several automatic behaviors and conventions that streamline API development. These include:
 Automatic ProblemDetails: When an error occurs (e.g., validation failure, unhandled exception), [ApiController] automatically formats the error response using the ProblemDetails specification (RFC 7807), providing a standardized and machine-readable error format.
 Smart JSON Options: It automatically applies certain JSON serialization options, such as camel-casing property names in responses, which is a common convention for RESTful APIs.
@@ -524,13 +385,13 @@ Manual Validation: Model validation needs to be implemented manually within your
 In essence:
 While Minimal APIs offer a faster and more lightweight way to create endpoints, they require more explicit configuration and manual implementation for features that are automatically provided by [ApiController] in traditional Controller-based APIs. This is a trade-off between simplicity/performance and built-in convenience features.
 
-
 # 3️⃣ Summary Table of ToList() impact (Minimal API)
-Dataset Type	Streaming (Values.Take)	With ToList()	Notes
-Single Product	32–65 μs, 11–12 KB	~same	small overhead
-Small Dataset	2,200 μs, 724 KB	23,000–33,000 μs, 10,200 KB	big slowdown, high allocations
-Medium Dataset	32,000 μs, 10,200 KB	42,000 μs, 10,400 KB	noticeable slowdown
-Concurrent Small	2,944 μs, 1.7 MB	44,693 μs, 45 MB	huge cost in concurrency
+
+Dataset Type Streaming (Values.Take) With ToList() Notes
+Single Product 32–65 μs, 11–12 KB ~same small overhead
+Small Dataset 2,200 μs, 724 KB 23,000–33,000 μs, 10,200 KB big slowdown, high allocations
+Medium Dataset 32,000 μs, 10,200 KB 42,000 μs, 10,400 KB noticeable slowdown
+Concurrent Small 2,944 μs, 1.7 MB 44,693 μs, 45 MB huge cost in concurrency
 
 ✅ Key takeaway:
 
@@ -541,12 +402,12 @@ Streaming (IEnumerable + Take) keeps memory allocations low and concurrency fast
 For single items, ToList() is negligible.
 
 # ToList()
+
 That .ToList() call copies all the count items into a new List<Product> before serialization.
 
 For small or medium datasets (1,000 – 10,000 items), this creates huge allocations and slows down serialization.
 
 Controllers and FastEndpoints don’t pay the same penalty because the serializer can stream directly from the IEnumerable.
-
 
 # Real Result number 1: Running the 3 benchmarks at the same time
 
@@ -682,6 +543,7 @@ Use Controllers when you want stronger conventions, model validation, better ser
 Use FastEndpoints if you want a structured but still "minimal-ish" framework (good balance under concurrency).
 
 ⚙️ Methodology
+
 1. Dataset Preparation
 
 Each framework is seeded with 10,000+ Product objects stored in a thread-safe ConcurrentDictionary<int, Product>.
@@ -903,6 +765,7 @@ Memory allocations jump into tens of MBs.
 Concurrency scaling is good for small requests, but bulk queries under concurrency consume massive memory and increase latency sharply.
 
 # Real Result number 3: FastEndpoint API only
+
 🧪 Methodology (FastEndpoints Benchmark)
 
 This benchmark tests the same set of operations as your Minimal API benchmark, but running through the FastEndpoints framework. FastEndpoints provides strongly-typed endpoints with DI, validation, and middleware baked in.
@@ -1137,6 +1000,7 @@ Dataset handling and concurrency scaling are as good as or better than FastEndpo
 CRUD speed is competitive across the board.
 
 # Real results 5: API Framework Comparison Benchmark
+
 🎯 Purpose
 
 This benchmark directly compares three API implementation styles in .NET 9:
@@ -1150,6 +1014,7 @@ FastEndpoints (a popular community library optimized for minimal overhead and hi
 The goal is to see how each framework performs across different workloads.
 
 🧪 Methodology
+
 1. Cold Start Scenarios
 
 Controller_ColdStart, MinimalApi_ColdStart, FastEndpoints_ColdStart
@@ -1210,6 +1075,7 @@ Controller APIs are stable, consistent, and memory-efficient for datasets.
 FastEndpoints is competitive, sometimes faster than Controllers, but has higher cold start costs and allocations in some cases.
 
 # Real results TLDR
+
 you’ve got 5 reports:
 
 NBomber load test (system-level, concurrency & throughput).
@@ -1235,6 +1101,7 @@ Summarizes with direct comparisons (from the comparison benchmark + NBomber load
 Ends with recommendations & use-case mapping.
 
 📊 Proposed Consolidated Report Structure
+
 1. Introduction
 
 Purpose of the benchmarks (compare Controllers, Minimal API, FastEndpoints).
@@ -1300,6 +1167,7 @@ FastEndpoints → competitive under load, slightly higher allocations.
 Practical guidance: which to choose depending on product type.
 
 # How to run NBombmer, load tests?
+
 How to run your load testing project
 
 Make sure you have your APIs running:
@@ -1314,23 +1182,21 @@ Go to your load test project folder (where you put ApiFrameworkLoadTests).
 
 cd path/to/ApiPerformanceComparison.LoadTests
 
-
 Run it with dotnet run:
 
 dotnet run
 
-
 You’ll see the prompt:
 
-SAFE API Framework Load Testing (Laptop-Friendly)
-=================================================
+# SAFE API Framework Load Testing (Laptop-Friendly)
+
 Select test to run:
+
 1. Basic Capacity Test
 2. Spike Test
 3. Mixed Workload Test
 4. Breaking Point Test
-Enter choice (1-4):
-
+   Enter choice (1-4):
 
 Enter 1, 2, 3, or 4 depending on the test you want.
 
@@ -1344,14 +1210,14 @@ spike_test_results_safe/
 
 mixed_workload_results_safe/
 
-breaking_point_results_safe_*
+breaking*point_results_safe*\*
 
 You’ll find both HTML reports and CSV files.
-
 
 # FINAL RESULTS
 
 ## Combined Frameworks
+
 🔎 High-Level Observations
 
 Cold Start
