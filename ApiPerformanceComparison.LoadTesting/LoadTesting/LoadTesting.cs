@@ -7,6 +7,7 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
     {
         private readonly HttpClient _httpClient;
         private readonly string _reportBaseDir;
+
         public ApiFrameworkLoadTests()
         {
             _httpClient = new HttpClient
@@ -23,7 +24,7 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
         }
 
         // =========================
-        // BASIC CAPACITY TEST (laptop safe)
+        // BASIC CAPACITY TEST
         // =========================
         public void RunBasicCapacityTest(string endpoint)
         {
@@ -48,13 +49,13 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder(Path.Combine(_reportBaseDir, "basic_capacity"))
-                .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
+                .WithReportFolder(Path.Combine(_reportBaseDir, GetName(endpoint), "basic_capacity"))
+                .WithReportFormats(ReportFormat.Csv)
                 .Run();
         }
 
         // =========================
-        // SPIKE TEST (laptop safe)
+        // SPIKE TEST
         // =========================
         public void RunSpikeTest(string endpoint)
         {
@@ -79,13 +80,13 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder(Path.Combine(_reportBaseDir, "spike_test"))
-                .WithReportFormats(ReportFormat.Html)
+                .WithReportFolder(Path.Combine(_reportBaseDir, GetName(endpoint), "spike_test"))
+                .WithReportFormats(ReportFormat.Csv)
                 .Run();
         }
 
         // =========================
-        // MIXED WORKLOAD TEST (laptop safe)
+        // MIXED WORKLOAD TEST
         // =========================
         public void RunMixedWorkloadTest(string endpoint)
         {
@@ -124,13 +125,13 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder(Path.Combine(_reportBaseDir, "mixed_workload"))
-                .WithReportFormats(ReportFormat.Html, ReportFormat.Csv)
+                .WithReportFolder(Path.Combine(_reportBaseDir, GetName(endpoint), "mixed_workload"))
+                .WithReportFormats(ReportFormat.Csv)
                 .Run();
         }
 
         // =========================
-        // BREAKING POINT TEST (laptop safe)
+        // BREAKING POINT TEST
         // =========================
         public void RunBreakingPointTest(string endpoint)
         {
@@ -156,8 +157,8 @@ namespace ApiPerformanceComparison.LoadTesting.LoadTesting
 
             NBomberRunner
                 .RegisterScenarios(scenario)
-                .WithReportFolder(Path.Combine(_reportBaseDir, $"breaking_point_{GetName(endpoint)}"))
-                .WithReportFormats(ReportFormat.Html)
+                .WithReportFolder(Path.Combine(_reportBaseDir, GetName(endpoint), "breaking_point"))
+                .WithReportFormats(ReportFormat.Csv)
                 .Run();
         }
 
