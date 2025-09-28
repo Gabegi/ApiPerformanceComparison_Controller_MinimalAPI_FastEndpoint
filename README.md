@@ -6,7 +6,7 @@ This project benchmarks three different API implementation styles in .NET 9:
 
 - Minimal APIs (introduced in .NET 6)
 
-Fa- stEndpoints
+- FastEndpoints
 (community library optimised for high throughput)
 
 The goal is to compare them in terms of performance only.
