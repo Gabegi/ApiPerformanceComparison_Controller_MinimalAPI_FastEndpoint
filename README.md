@@ -27,7 +27,7 @@ Provide actionable insights for framework choice.
 
 In API contexts, performance is not just raw response time:
 
-- Throughput – requests per second.
+- Throughput – requests per second
 
 - Latency – average, P95, P99 response times.
 
